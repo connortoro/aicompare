@@ -1,103 +1,96 @@
-import Image from "next/image";
+"use client"
+
+import { sendPrompt } from "@/actions/chat";
+import { useState } from "react";
+import { FaArrowUp, FaCross } from "react-icons/fa";
+import { FaX } from "react-icons/fa6";
+
+type Completion = {
+  prompt: string,
+  response: string
+}
+
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [prompt, setPrompt] = useState<string>("")
+  const [completions, setCompletions] = useState<Completion[]>([])
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  async function handleSubmit() {
+    setPrompt("")
+    setCompletions(currCompletions => [...currCompletions, {prompt, response: ""}])
+    const response = await sendPrompt(prompt, completions, "microsoft/mai-ds-r1:free")
+    setCompletions(currCompletions =>
+      currCompletions.map(completion =>
+        completion.prompt === prompt ? { ...completion, response: response } : completion
+      )
+    )
+  }
+
+  function handleClear() {
+    setPrompt("")
+    setCompletions([])
+  }
+
+  return (
+    <div className="flex flex-col justify-center items-center h-screen text-white text-xl w-full">
+      <h1 className="text-4xl font-bold underline decoration-dashed underline-offset-4">chatoro</h1>
+      {/* messages section */}
+      <div className="flex flex-col w-[85%] justify-start items-center bg-neutral-900 h-[75%] mt-9 rounded-xl p-[2rem] overflow-y-auto space-y-3">
+        {completions.length == 0 && <h1 className="text-4xl font-bold mt-[20rem]">Hey, what's up?</h1>}
+        {completions.map((comp, i) => {
+          return (
+            <div className="flex flex-row justify-between w-full" key={i}>
+              <div className="flex flex-col justify-end items-start max-w-[60%] text-wrap whitespace-pre-line">
+              <p className="max-w-[100%] p-[1rem] rounded-xl mt-[2rem] bg-transparent text-transparent text-wrap break-words" style={{ userSelect: 'none' }}>
+                  {comp.prompt}
+                </p>
+                {comp.response === "" ?
+                <p className="max-w-[100%] p-[.8rem] bg-neutral-800 rounded-xl mt-[2rem] break-words text-3xl animate-pulse">
+                • • •
+                </p>
+                :
+                <p className="max-w-[100%] p-[1rem] bg-neutral-800 rounded-xl mt-[2rem] break-words">
+                  {comp.response}
+                </p>
+                 }
+
+              </div>
+              <div className="flex flex-row justify-end items-start max-w-[80%] text-wrap whitespace-pre-line">
+                <p className="max-w-[100%] p-[1rem] bg-neutral-800 rounded-xl break-words">
+                  {comp.prompt}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* input section */}
+      <div className="flex flex-col w-[60%] space-y-4 justify-center items-center bg-neutral-900 mt-9 rounded-xl p-[1.5rem]">
+        <div className="flex flex-row justify-center items-center space-x-6 w-full">
+          <textarea
+            value={prompt}
+            placeholder="Ask me something"
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                handleSubmit()
+              }
+            }}
+            className="bg-neutral-700 resize-none w-[90%] min-h-[7rem] rounded-xl p-[.6rem]"
+          ></textarea>
+          <div className="space-y-4">
+            <button
+              onClick={handleSubmit}
+              className="text-white p-[1rem] bg-neutral-700 rounded-xl hover:cursor-pointer hover:scale-[1.2] transition"
+            >
+              <FaArrowUp />
+            </button>
+            <button onClick={handleClear} className="text-white p-[.6rem] bg-neutral-700 rounded-lg hover:cursor-pointer hover:scale-[1.2] transition"><FaX/></button>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
 }
