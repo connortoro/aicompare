@@ -21,6 +21,7 @@ const modelMap: Record<string, string> = {
   "GPT-4.1": "openai/gpt-4.1",
   "o4-mini": "openai/o4-mini",
   "Claude 3.7 Sonnet": "anthropic/claude-3.7-sonnet",
+  "Claude 3.5 Sonnet": "anthropic/claude-3.5-sonnet",
 }
 
 

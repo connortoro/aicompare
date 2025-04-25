@@ -2,11 +2,10 @@
 
 import { sendPrompt } from "@/actions/chat";
 import { ReactElement, useState } from "react";
-import { FaArrowUp, FaGoogle } from "react-icons/fa";
+import { FaArrowUp, FaCaretDown, FaCaretUp, FaGoogle } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { SiClaude, SiOpenai } from "react-icons/si";
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import rehypeHighlight from "rehype-highlight";
 import 'highlight.js/styles/atom-one-dark.css';
 
@@ -21,6 +20,7 @@ const models = [
   "GPT-4.1",
   "o4-mini",
   "Claude 3.7 Sonnet",
+  "Claude 3.5 Sonnet",
 ]
 
 const iconMap: Record<string, ReactElement> = {
@@ -29,6 +29,7 @@ const iconMap: Record<string, ReactElement> = {
   "GPT-4.1": <SiOpenai className="text-xl"/>,
   "o4-mini": <SiOpenai className="text-xl"/>,
   "Claude 3.7 Sonnet": <SiClaude className="text-xl"/>,
+  "Claude 3.5 Sonnet": <SiClaude className="text-xl"/>
 }
 
 
@@ -54,13 +55,13 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen text-neutral-200 w-full bg-netural-950 font-semibold">
-      <h1 className="text-2xl font-normal text-neutral-400 mt-2">aicompare</h1>
+    <div className="flex flex-col justify-start items-center h-full text-neutral-200 w-full bg-neutral-900">
+      <h1 className="text-2xl font-normal text-neutral-400 mt-4 ">ai_compare</h1>
       {/* messages section */}
-      <div className="flex flex-col xl:w-[80rem] lg:w-[60rem] justify-start items-center bg-neutral-900 h-[75%] mt-4 rounded-xl p-[2rem] overflow-y-auto space-y-3">
+      <div className="flex flex-col 2xl:w-[100rem] xl:w-[80rem] lg:w-[60rem] justify-start items-center bg-neutral-900 mt-4 rounded-xl p-[2rem] overflow-y-auto space-y-3 custom-scrollbar pb-[12rem]">
         {completions.length == 0 && (
           <div className="flex flex-col items-center justify-center space-y-8">
-            <h1 className="text-3xl font-bold mt-[50%]">Hey, what's up?</h1>
+            <h1 className="text-3xl font-bold mt-[80%]">Hey, what&apos;s up?</h1>
             <h2 className="text-neutral-300 text-lg">pick a model down below and ask a question!</h2>
           </div>
           )}
@@ -76,22 +77,22 @@ export default function Home() {
                 • • •
                 </p>
                 :
-                <div className="w-full p-[.8rem] bg-neutral-800 rounded-xl mt-[2rem] text-md">
+                <div className="w-full p-[.8rem] bg-neutral-800 rounded-xl mt-[2rem] text-lg">
                   <ReactMarkdown
                     rehypePlugins={[rehypeHighlight]}
                     components={{
                       // This applies styles to the root element
-                      p: ({node, children, ...props}) => (
+                      p: ({children, ...props}) => (
                         <p className="whitespace-pre-wrap break-words" {...props}>
                           {children}
                         </p>
                       ),
-                      code: ({node, className, children, ...props}) => (
+                      code: ({className, children, ...props}) => (
                         <code className={`${className || ''} break-all rounded-xl`} {...props}>
                           {children}
                         </code>
                       ),
-                      pre: ({node, children, ...props}) => (
+                      pre: ({children, ...props}) => (
                         <pre className="whitespace-pre-wrap break-words overflow-x-hidden" {...props}>
                           {children}
                         </pre>
@@ -105,7 +106,7 @@ export default function Home() {
                  }
 
               </div>
-              <div className="flex flex-row justify-end items-start max-w-[80%] text-wrap whitespace-pre-line">
+              <div className="flex flex-row justify-end items-start max-w-[80%] text-wrap whitespace-pre-line text-lg">
                 <p className="max-w-[100%] p-[1rem] bg-neutral-800 rounded-xl break-words">
                   {comp.prompt}
                 </p>
@@ -115,11 +116,11 @@ export default function Home() {
         })}
       </div>
       {/* input section */}
-      <div className="flex flex-col max-w-[65rem] min-w-[50rem] space-y-4 justify-center items-center bg-neutral-900 mt-9 rounded-xl p-4 font-normal">
+      <div className="flex flex-col 2xl:w-[100rem] xl:w-[80rem] lg:w-[60rem] space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 py-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-x-2 border-neutral-800">
         <div className="flex flex-row justify-center items-center space-x-4 w-full">
-          <div className="relative text-sm hover:cursor-pointer outline-2 outline-neutral-600 p-2 rounded-xl">
-            <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[6rem] text-sm text-neutral-300">{model}</button>
-            {selectingModel && <div className="flex flex-col items-start  absolute bottom-full w-[15rem] bg-neutral-600/10 backdrop-blur-sm space-y-4 mb-[1rem] p-[1rem] left-[-64] rounded-xl hover:cursor-default">
+          <div className="relative text-sm hover:cursor-pointer outline-2 outline-neutral-700 p-2 rounded-xl bg-neutral-800">
+            <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[6rem] text-sm text-neutral-300 flex flex-row items-center justify-between">{model}{selectingModel ? <FaCaretUp/> : <FaCaretDown/>}</button>
+            {selectingModel && <div className="flex flex-col items-start  absolute bottom-full w-[15rem] bg-neutral-600/10 backdrop-blur-sm  space-y-4 mb-[1rem] p-[1rem] left-[-64] rounded-xl hover:cursor-default">
               {models.map(model => {
                 return(
                   <button
@@ -149,7 +150,7 @@ export default function Home() {
                 handleSubmit()
               }
             }}
-            className="bg-neutral-800 resize-none w-[77%] min-h-[7rem] rounded-xl p-[.6rem] text-md focus:outline-none"
+            className="bg-neutral-800/80 resize-none w-[50%] min-h-[7rem] rounded-xl p-[.6rem] text-md focus:outline-none focus:ring-2 ring-neutral-700"
           ></textarea>
           <div className="space-y-2 text-lg flex flex-col item-center justify-center">
             <button onClick={handleSubmit}className="text-neutral-300 p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer hover:scale-[1.2] transition text-md"><FaArrowUp /></button>
