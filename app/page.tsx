@@ -54,13 +54,13 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen text-neutral-100 w-full bg-netural-950">
-      <h1 className="text-2xl font-bold mt-2">aicompare</h1>
+    <div className="flex flex-col justify-center items-center h-screen text-neutral-200 w-full bg-netural-950 font-semibold">
+      <h1 className="text-2xl font-normal text-neutral-400 mt-2">aicompare</h1>
       {/* messages section */}
       <div className="flex flex-col xl:w-[80rem] lg:w-[60rem] justify-start items-center bg-neutral-900 h-[75%] mt-4 rounded-xl p-[2rem] overflow-y-auto space-y-3">
         {completions.length == 0 && (
           <div className="flex flex-col items-center justify-center space-y-8">
-            <h1 className="text-3xl font-bold mt-[15%]">Hey, what's up?</h1>
+            <h1 className="text-3xl font-bold mt-[50%]">Hey, what's up?</h1>
             <h2 className="text-neutral-300 text-lg">pick a model down below and ask a question!</h2>
           </div>
           )}
@@ -115,9 +115,9 @@ export default function Home() {
         })}
       </div>
       {/* input section */}
-      <div className="flex flex-col max-w-[60rem] min-w-[50rem] space-y-4 justify-center items-center bg-neutral-900 mt-9 rounded-xl p-4">
+      <div className="flex flex-col max-w-[65rem] min-w-[50rem] space-y-4 justify-center items-center bg-neutral-900 mt-9 rounded-xl p-4 font-normal">
         <div className="flex flex-row justify-center items-center space-x-4 w-full">
-          <div className="relative text-sm hover:cursor-pointer outline-1 outline-neutral-600 p-2 rounded-xl">
+          <div className="relative text-sm hover:cursor-pointer outline-2 outline-neutral-600 p-2 rounded-xl">
             <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[6rem] text-sm text-neutral-300">{model}</button>
             {selectingModel && <div className="flex flex-col items-start  absolute bottom-full w-[15rem] bg-neutral-600/10 backdrop-blur-sm space-y-4 mb-[1rem] p-[1rem] left-[-64] rounded-xl hover:cursor-default">
               {models.map(model => {
@@ -141,6 +141,7 @@ export default function Home() {
           <textarea
             value={prompt}
             placeholder="Ask me something"
+            onClick={()=> setSelectingModel(false)}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
@@ -148,10 +149,10 @@ export default function Home() {
                 handleSubmit()
               }
             }}
-            className="bg-neutral-800 resize-none w-[72%] min-h-[7rem] rounded-xl p-[.6rem] text-lg focus:outline-none"
+            className="bg-neutral-800 resize-none w-[77%] min-h-[7rem] rounded-xl p-[.6rem] text-md focus:outline-none"
           ></textarea>
           <div className="space-y-2 text-lg flex flex-col item-center justify-center">
-            <button onClick={handleSubmit}className="text-white p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer hover:scale-[1.2] transition"><FaArrowUp /></button>
+            <button onClick={handleSubmit}className="text-neutral-300 p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer hover:scale-[1.2] transition text-md"><FaArrowUp /></button>
             <button onClick={handleClear} className="text-neutral-400 p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer hover:scale-[1] scale-[.9] transition"><FaX/></button>
           </div>
         </div>
