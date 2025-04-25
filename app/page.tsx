@@ -56,9 +56,9 @@ export default function Home() {
 
   return (
     <div className="flex flex-col justify-start items-center h-full text-neutral-200 w-full bg-neutral-900">
-      <h1 className="text-2xl font-normal text-neutral-400 mt-4 ">ai_compare</h1>
+      <h2 className="absolute text-xl font-semibold text-neutral-400 pt-6 -translate-x-[690%]">ai_compare</h2>
       {/* messages section */}
-      <div className="flex flex-col 2xl:w-[100rem] xl:w-[80rem] lg:w-[60rem] justify-start items-center bg-neutral-900 mt-4 rounded-xl p-[2rem] overflow-y-auto space-y-3 custom-scrollbar pb-[12rem]">
+      <div className="flex flex-col 2xl:w-[90rem] xl:w-[70rem] w-[55rem] justify-start items-center bg-neutral-900 rounded-xl p-[2rem] overflow-y-auto space-y-3 custom-scrollbar pb-[12rem]">
         {completions.length == 0 && (
           <div className="flex flex-col items-center justify-center space-y-8">
             <h1 className="text-3xl font-bold mt-[80%]">Hey, what&apos;s up?</h1>
@@ -116,10 +116,10 @@ export default function Home() {
         })}
       </div>
       {/* input section */}
-      <div className="flex flex-col 2xl:w-[100rem] xl:w-[80rem] lg:w-[60rem] space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 py-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-x-2 border-neutral-800">
+      <div className="flex flex-col 2xl:w-[90rem] xl:w-[70rem] w-[55rem] space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 py-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-x-2 border-neutral-800">
         <div className="flex flex-row justify-center items-center space-x-4 w-full">
-          <div className="relative text-sm hover:cursor-pointer outline-2 outline-neutral-700 p-2 rounded-xl bg-neutral-800">
-            <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[6rem] text-sm text-neutral-300 flex flex-row items-center justify-between">{model}{selectingModel ? <FaCaretUp/> : <FaCaretDown/>}</button>
+          <div className="relative text-sm hover:cursor-pointer outline-2 outline-neutral-700 p-2 rounded-xl bg-neutral-800 mr-[3rem]">
+            <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[10rem] h-[2.5rem] text-sm text-neutral-300 flex flex-row items-center justify-between">{model} {iconMap[model]} {selectingModel ? <FaCaretUp/> : <FaCaretDown/>}</button>
             {selectingModel && <div className="flex flex-col items-start  absolute bottom-full w-[15rem] bg-neutral-600/10 backdrop-blur-sm  space-y-4 mb-[1rem] p-[1rem] left-[-64] rounded-xl hover:cursor-default">
               {models.map(model => {
                 return(
@@ -150,7 +150,7 @@ export default function Home() {
                 handleSubmit()
               }
             }}
-            className="bg-neutral-800/80 resize-none w-[50%] min-h-[7rem] rounded-xl p-[.6rem] text-md focus:outline-none focus:ring-2 ring-neutral-700"
+            className="bg-neutral-800/80 resize-none w-[50%] min-h-[7rem] rounded-xl p-[.6rem] px-[.8rem] text-md focus:outline-none focus:ring-2 ring-neutral-700"
           ></textarea>
           <div className="space-y-2 text-lg flex flex-col item-center justify-center">
             <button onClick={handleSubmit}className="text-neutral-300 p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer hover:scale-[1.2] transition text-md"><FaArrowUp /></button>
