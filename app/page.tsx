@@ -7,6 +7,8 @@ import { FaX } from "react-icons/fa6";
 import { SiClaude, SiOpenai } from "react-icons/si";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeHighlight from "rehype-highlight";
+import 'highlight.js/styles/atom-one-dark.css';
 
 type Completion = {
   prompt: string,
@@ -52,31 +54,31 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen text-white w-full">
-      <h1 className="text-4xl font-bold underline decoration-dashed underline-offset-4">chatoro</h1>
+    <div className="flex flex-col justify-center items-center h-screen text-neutral-100 w-full bg-netural-950">
+      <h1 className="text-2xl font-bold mt-2">aicompare</h1>
       {/* messages section */}
-      <div className="flex flex-col max-w-[100rem] w-[85%] justify-start items-center bg-neutral-900 h-[75%] mt-9 rounded-xl p-[2rem] overflow-y-auto space-y-3">
+      <div className="flex flex-col xl:w-[80rem] lg:w-[60rem] justify-start items-center bg-neutral-900 h-[75%] mt-4 rounded-xl p-[2rem] overflow-y-auto space-y-3">
         {completions.length == 0 && (
           <div className="flex flex-col items-center justify-center space-y-8">
-            <h1 className="text-4xl font-bold mt-[20rem]">Hey, what's up?</h1>
-            <h2 className="text-neutral-300 text-xl">pick a model down below and ask a question!</h2>
+            <h1 className="text-3xl font-bold mt-[15%]">Hey, what's up?</h1>
+            <h2 className="text-neutral-300 text-lg">pick a model down below and ask a question!</h2>
           </div>
           )}
         {completions.map((comp, i) => {
           return (
-            <div className="flex flex-row justify-between w-full" key={i}>
+            <div className="flex flex-row justify-between w-full text-sm" key={i}>
               <div className="flex flex-col justify-end items-start max-w-[60%] text-wrap whitespace-pre-line">
                 <p className="w-[100%] p-[1rem] rounded-xl mt-[2rem] bg-transparent text-transparent text-wrap break-words" style={{ userSelect: 'none' }}>
                     {comp.prompt}
                 </p>
                 {comp.response === "" ?
-                <p className="max-w-[100%] p-[.8rem] bg-neutral-800 rounded-xl mt-[2rem] break-words text-3xl animate-pulse">
+                <p className="max-w-[100%] p-[.8rem] bg-neutral-800 rounded-xl mt-[2rem] break-words text-2xl animate-pulse">
                 • • •
                 </p>
                 :
-                <div className="w-full p-[.8rem] bg-neutral-800 rounded-xl mt-[2rem]">
+                <div className="w-full p-[.8rem] bg-neutral-800 rounded-xl mt-[2rem] text-md">
                   <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
                     components={{
                       // This applies styles to the root element
                       p: ({node, children, ...props}) => (
@@ -85,7 +87,7 @@ export default function Home() {
                         </p>
                       ),
                       code: ({node, className, children, ...props}) => (
-                        <code className={`${className || ''} break-all`} {...props}>
+                        <code className={`${className || ''} break-all rounded-xl`} {...props}>
                           {children}
                         </code>
                       ),
@@ -113,11 +115,11 @@ export default function Home() {
         })}
       </div>
       {/* input section */}
-      <div className="flex flex-col max-w-[100rem]  w-[75%] space-y-4 justify-center items-center bg-neutral-900 mt-9 rounded-xl p-[1.5rem]">
-        <div className="flex flex-row justify-center items-center space-x-6 w-full">
-          <div className="relative text-md hover:cursor-pointer outline-2 outline-neutral-600 p-2 rounded-xl font-semibold">
-            <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[8rem] h-[5rem] px-[8px]">{model}</button>
-            {selectingModel && <div className="flex flex-col items-start  absolute bottom-full w-[18rem] bg-neutral-800 opacity-80 backdrop-blur-3xl space-y-4 mb-[1rem] p-[2rem] left-[-64] rounded-xl hover:cursor-default">
+      <div className="flex flex-col max-w-[60rem] min-w-[50rem] space-y-4 justify-center items-center bg-neutral-900 mt-9 rounded-xl p-4">
+        <div className="flex flex-row justify-center items-center space-x-4 w-full">
+          <div className="relative text-sm hover:cursor-pointer outline-1 outline-neutral-600 p-2 rounded-xl">
+            <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[6rem] text-sm text-neutral-300">{model}</button>
+            {selectingModel && <div className="flex flex-col items-start  absolute bottom-full w-[15rem] bg-neutral-600/10 backdrop-blur-sm space-y-4 mb-[1rem] p-[1rem] left-[-64] rounded-xl hover:cursor-default">
               {models.map(model => {
                 return(
                   <button
@@ -126,7 +128,7 @@ export default function Home() {
                       setModel(model);
                       setSelectingModel(false)
                     }}
-                    className="w-full hover:cursor-pointer opacity-100 text-white outline-2 outline-neutral-500 p-[10px] rounded-xl font-semibold ">
+                    className="w-full hover:cursor-pointer opacity-100 outline-2 outline-neutral-500 p-[10px] rounded-xl font-semibold ">
                     <div className="flex flex-row justify-between items-center px-2">
                       {model}
                       {iconMap[model]}
@@ -146,11 +148,11 @@ export default function Home() {
                 handleSubmit()
               }
             }}
-            className="bg-neutral-700 resize-none w-[75%] min-h-[7rem] rounded-xl p-[.6rem] text-xl focus:outline-none"
+            className="bg-neutral-800 resize-none w-[72%] min-h-[7rem] rounded-xl p-[.6rem] text-lg focus:outline-none"
           ></textarea>
           <div className="space-y-2 text-lg flex flex-col item-center justify-center">
-            <button onClick={handleSubmit}className="text-white p-[1rem] bg-neutral-700 rounded-xl hover:cursor-pointer hover:scale-[1.2] transition"><FaArrowUp /></button>
-            <button onClick={handleClear} className="text-neutral-300 p-[1rem] bg-neutral-700 rounded-xl hover:cursor-pointer hover:scale-[1] scale-[.9] transition"><FaX/></button>
+            <button onClick={handleSubmit}className="text-white p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer hover:scale-[1.2] transition"><FaArrowUp /></button>
+            <button onClick={handleClear} className="text-neutral-400 p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer hover:scale-[1] scale-[.9] transition"><FaX/></button>
           </div>
         </div>
       </div>
