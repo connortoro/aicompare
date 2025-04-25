@@ -15,6 +15,14 @@ type Completion = {
   response: string
 }
 
+const modelMap: Record<string, string> = {
+  "Gemini 2.0 Flash": "google/gemini-2.0-flash-001",
+  "Gemini 2.5 Pro": "google/gemini-2.5-pro-preview-03-25",
+  "GPT-4.1": "openai/gpt-4.1",
+  "o4-mini": "openai/o4-mini",
+  "Claude 3.7 Sonnet": "anthropic/claude-3.7-sonnet",
+}
+
 
 export async function sendPrompt(message: string, completions: Completion[], model: string): Promise<string> {
   var currMessages: (
@@ -29,8 +37,13 @@ export async function sendPrompt(message: string, completions: Completion[], mod
 
   currMessages.push({ role: 'user', content: message })
 
+  const openRouterModel = modelMap[model]
+  if(!openRouterModel){
+    return "Error..."
+  }
+
   const completion = await openai.chat.completions.create({
-    model,
+    model: openRouterModel,
     messages: [...currMessages]
   });
   return completion.choices[0].message.content || "Error, something bad happened"
