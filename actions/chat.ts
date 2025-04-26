@@ -26,10 +26,13 @@ const modelMap: Record<string, string> = {
 
 
 export async function sendPrompt(message: string, completions: Completion[], model: string): Promise<string> {
-  var currMessages: (
+  const currMessages: (
     | ChatCompletionUserMessageParam
     | ChatCompletionAssistantMessageParam
-  )[] = [];
+    | { role: 'system'; content: string }
+  )[] = [
+    { role: 'system', content: 'You are a helpful, concise assistant.' }
+  ];
 
   for(const completion of completions){
     currMessages.push({ role: 'user', content: completion.prompt })

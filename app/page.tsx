@@ -5,9 +5,8 @@ import { ReactElement, useState } from "react";
 import { FaArrowUp, FaCaretDown, FaCaretUp, FaGoogle } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { SiClaude, SiOpenai } from "react-icons/si";
-import ReactMarkdown from 'react-markdown';
-import rehypeHighlight from "rehype-highlight";
-import 'highlight.js/styles/atom-one-dark.css';
+
+import Messages from "./components/messages";
 
 type Completion = {
   prompt: string,
@@ -56,67 +55,12 @@ export default function Home() {
 
   return (
     <div className="flex flex-col justify-start items-center h-full text-neutral-200 w-full bg-neutral-900">
-      <h2 className="absolute text-xl font-semibold text-neutral-400 pt-6 -translate-x-[690%]">ai_compare</h2>
+      <h2 className="fixed top-4 left-6 text-xl font-semibold text-neutral-400">ai_compare</h2>
       {/* messages section */}
-      <div className="flex flex-col 2xl:w-[90rem] xl:w-[70rem] w-[55rem] justify-start items-center bg-neutral-900 rounded-xl p-[2rem] overflow-y-auto space-y-3 custom-scrollbar pb-[12rem]">
-        {completions.length == 0 && (
-          <div className="flex flex-col items-center justify-center space-y-8">
-            <h1 className="text-3xl font-bold mt-[80%]">Hey, what&apos;s up?</h1>
-            <h2 className="text-neutral-300 text-lg">pick a model down below and ask a question!</h2>
-          </div>
-          )}
-        {completions.map((comp, i) => {
-          return (
-            <div className="flex flex-row justify-between w-full text-sm" key={i}>
-              <div className="flex flex-col justify-end items-start max-w-[60%] text-wrap whitespace-pre-line">
-                <p className="w-[100%] p-[1rem] rounded-xl mt-[2rem] bg-transparent text-transparent text-wrap break-words" style={{ userSelect: 'none' }}>
-                    {comp.prompt}
-                </p>
-                {comp.response === "" ?
-                <p className="max-w-[100%] p-[.8rem] bg-neutral-800 rounded-xl mt-[2rem] break-words text-2xl animate-pulse">
-                • • •
-                </p>
-                :
-                <div className="w-full p-[.8rem] bg-neutral-800 rounded-xl mt-[2rem] text-lg">
-                  <ReactMarkdown
-                    rehypePlugins={[rehypeHighlight]}
-                    components={{
-                      // This applies styles to the root element
-                      p: ({children, ...props}) => (
-                        <p className="whitespace-pre-wrap break-words" {...props}>
-                          {children}
-                        </p>
-                      ),
-                      code: ({className, children, ...props}) => (
-                        <code className={`${className || ''} break-all rounded-xl`} {...props}>
-                          {children}
-                        </code>
-                      ),
-                      pre: ({children, ...props}) => (
-                        <pre className="whitespace-pre-wrap break-words overflow-x-hidden" {...props}>
-                          {children}
-                        </pre>
-                      )
-                    }}
-                  >
-                    {comp.response}
-                  </ReactMarkdown>
-                </div>
-
-                 }
-
-              </div>
-              <div className="flex flex-row justify-end items-start max-w-[80%] text-wrap whitespace-pre-line text-lg">
-                <p className="max-w-[100%] p-[1rem] bg-neutral-800 rounded-xl break-words">
-                  {comp.prompt}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <Messages completions={completions}/>
+      
       {/* input section */}
-      <div className="flex flex-col 2xl:w-[90rem] xl:w-[70rem] w-[55rem] space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 py-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-x-2 border-neutral-800">
+      <div className="flex flex-col 2xl:w-[70rem] xl:w-[50rem] w-[45rem] space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 py-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-x-2 border-neutral-800">
         <div className="flex flex-row justify-center items-center space-x-4 w-full">
           <div className="relative text-sm hover:cursor-pointer outline-2 outline-neutral-700 p-2 rounded-xl bg-neutral-800 mr-[3rem]">
             <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[10rem] h-[2.5rem] text-sm text-neutral-300 flex flex-row items-center justify-between">{model} {iconMap[model]} {selectingModel ? <FaCaretUp/> : <FaCaretDown/>}</button>
