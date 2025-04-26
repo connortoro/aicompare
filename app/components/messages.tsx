@@ -1,8 +1,11 @@
 "use client"
-import React from 'react'
+
+import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from "rehype-highlight";
 import 'highlight.js/styles/atom-one-dark.css';
+import { FaCheck, FaRegCopy } from 'react-icons/fa';
+import type { Element } from "hast"; 
 
 type Completion = {
   prompt: string,
@@ -12,6 +15,56 @@ type Completion = {
 type MessageProps = {
   completions: Completion[]
 }
+
+function getTextFromNode(node: React.ReactNode | string | number): string {
+  if (typeof node === 'string') return node;
+  if (typeof node === 'number') return String(node);
+  if (!node) return '';
+  if (Array.isArray(node)) return node.map(getTextFromNode).join('');
+  if (typeof node === 'object' && 
+      'props' in node && 
+      node.props && 
+      typeof node.props === 'object' && 
+      'children' in node.props) {
+    return getTextFromNode(node.props.children as React.ReactNode);
+  }
+  return '';
+}
+
+type CodeProps = React.HTMLAttributes<HTMLElement> & {
+  inline?: boolean;
+  node?: Element; 
+  children?: React.ReactNode;
+};
+const Code = ({ className, children, ...props }: CodeProps) => {
+  const [copied, setCopied] = useState(false);
+  if (!className) {
+    return <code {...props}>{children}</code>;
+  }
+
+
+  
+  const handleCopy = () => {
+    const text = getTextFromNode(children)
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1000);
+  };
+
+  return (
+    <div className="relative">
+      <button 
+        onClick={handleCopy}
+        className="absolute top-2 right-2 p-2 hover:bg-neutral-800 rounded"
+      >
+        {copied ? <FaCheck className='text-[#98C379]'/> : <FaRegCopy />}
+      </button>
+      <code className={`${className} break-all rounded-xl block pt-8`} {...props}>
+        {children}
+      </code>
+    </div>
+  );
+};
 
 export default function Messages({ completions }: MessageProps) {
   return (
@@ -27,7 +80,7 @@ export default function Messages({ completions }: MessageProps) {
         return (
           <div className="flex flex-col justify-start items-center w-full space-y-6 text-sm" key={i}>
             <div className="flex flex-row justify-end items-start w-full">
-              <div className="p-[1rem] bg-neutral-800 rounded-xl break-words text-lg max-w-[70%]">
+              <div className="p-[1rem] bg-neutral-800 rounded-xl break-words text-lg max-w-[70%] whitespace-pre-wrap">
                 {comp.prompt}
               </div>
             </div>
@@ -37,7 +90,7 @@ export default function Messages({ completions }: MessageProps) {
                   • • •
                 </div>
               ) : (
-                <div className="p-[.8rem] bg-neutral-800 rounded-xl text-lg max-w-[70%]">
+                <div className="p-[.8rem] bg-neutral-800 rounded-xl text-lg max-w-[83%] space-y-6">
                   <ReactMarkdown
                     rehypePlugins={[rehypeHighlight]}
                     components={{
@@ -46,13 +99,9 @@ export default function Messages({ completions }: MessageProps) {
                           {children}
                         </p>
                       ),
-                      code: ({className, children, ...props}) => (
-                        <code className={`${className || ''} break-all rounded-xl`} {...props}>
-                          {children}
-                        </code>
-                      ),
+                      code: Code,
                       pre: ({children, ...props}) => (
-                        <pre className="whitespace-pre-wrap break-words overflow-x-hidden" {...props}>
+                        <pre className="whitespace-pre-wrap break-words overflow-x-hidden relative" {...props}>
                           {children}
                         </pre>
                       )
