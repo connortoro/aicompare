@@ -46,7 +46,7 @@ export default function Home() {
     }
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
-    
+
     setPrompt("")
     setCompletions(currCompletions => [...currCompletions, {prompt, response: ""}])
     const { output } = await sendPrompt(prompt, completions, model)
@@ -59,19 +59,19 @@ export default function Home() {
       fullText += delta
       setCompletions(prev => {
         const curr = [...prev]
-        curr[curr.length-1].response = fullText 
+        curr[curr.length-1].response = fullText
         return curr
         })
     }
     if (!signal.aborted) {
       setCompletions(prev => {
         const curr = [...prev]
-        curr[curr.length-1].response = fullText 
+        curr[curr.length-1].response = fullText
         return curr
         })
     }
   }
-    
+
   function handleClear() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -85,11 +85,11 @@ export default function Home() {
       <h2 className="fixed top-4 left-6 text-xl font-semibold text-neutral-400">ai_compare</h2>
       {/* messages section */}
       <Messages completions={completions}/>
-      
+
       {/* input section */}
-      <div className="flex flex-col 2xl:w-[70rem] xl:w-[50rem] w-[45rem] space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 py-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-x-2 border-neutral-800">
+      <div className="flex flex-col 2xl:w-[70rem] xl:w-[60rem] md:w-[50rem] w-full space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 py-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-x-2 border-neutral-800">
         <div className="flex flex-row justify-center items-center space-x-4 w-full">
-          <div className="relative text-sm hover:cursor-pointer outline-2 outline-neutral-700 p-2 rounded-xl bg-neutral-800 mr-[3rem]">
+          <div className="relative text-sm hover:cursor-pointer outline-2 outline-neutral-700 p-2 rounded-xl bg-neutral-800/40 backdrop-blur-md mr-[3rem]">
             <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[10rem] h-[2.5rem] text-sm text-neutral-300 flex flex-row items-center justify-between">{model} {iconMap[model]} {selectingModel ? <FaCaretUp/> : <FaCaretDown/>}</button>
             {selectingModel && <div className="flex flex-col items-start  absolute bottom-full w-[15rem] bg-neutral-600/10 backdrop-blur-sm  space-y-4 mb-[1rem] p-[1rem] left-[-64] rounded-xl hover:cursor-default">
               {models.map(model => {

@@ -38,14 +38,14 @@ const Code = ({ className, children, ...props }: CodeProps) => {
     const text = getTextFromNode(children)
     navigator.clipboard.writeText(text);
     setCopied(true);
-    setTimeout(() => setCopied(false), 1000);
+    setTimeout(() => setCopied(false), 500);
   };
 
   return (
     <div className="relative">
       <button
         onClick={handleCopy}
-        className="absolute top-2 right-2 p-2 hover:bg-neutral-800 rounded text-neutral-300"
+        className="absolute top-2 right-2 p-2 hover:bg-neutral-800 rounded text-neutral-300 hover:cursor-pointer"
       >
         {copied ? <FaCheck className='text-[#98C379]'/> : <FaRegCopy />}
       </button>
@@ -65,7 +65,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                   • • •
                 </div>
               ) : (
-                <div className="p-[.8rem] bg-[#222222] rounded-xl text-lg max-w-[83%] space-y-6">
+                <div className="p-[.8rem] bg-[#222222] rounded-xl  xl:text-lg text-md max-w-[83%] space-y-6">
                   <ReactMarkdown
                     rehypePlugins={[rehypeHighlight]}
                     components={{
