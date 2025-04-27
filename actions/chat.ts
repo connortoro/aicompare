@@ -1,14 +1,14 @@
 "use server"
-import OpenAI  from 'openai'
-import {
-  ChatCompletionUserMessageParam,
-  ChatCompletionAssistantMessageParam,
-} from "openai/resources/chat/completions";
+import { CoreMessage, streamText } from 'ai';
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { createStreamableValue } from 'ai/rsc';
 
-const openai = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY
-});
+// const openai = new OpenAI({
+//   baseURL: 'https://openrouter.ai/api/v1',
+//   apiKey: process.env.OPENROUTER_API_KEY
+// });
+
+const openrouter = createOpenRouter({ apiKey: process.env.OPENROUTER_API_KEY });
 
 type Completion = {
   prompt: string,
@@ -25,30 +25,31 @@ const modelMap: Record<string, string> = {
 }
 
 
-export async function sendPrompt(message: string, completions: Completion[], model: string): Promise<string> {
-  const currMessages: (
-    | ChatCompletionUserMessageParam
-    | ChatCompletionAssistantMessageParam
-    | { role: 'system'; content: string }
-  )[] = [
+export async function sendPrompt(message: string, completions: Completion[], model: string) {
+
+  const currMessages: CoreMessage[] = [
     { role: 'system', content: 'You are a helpful, concise assistant.' }
   ];
-
   for(const completion of completions){
     currMessages.push({ role: 'user', content: completion.prompt })
     currMessages.push({ role: 'assistant', content: completion.response })
   }
-
   currMessages.push({ role: 'user', content: message })
 
-  const openRouterModel = modelMap[model]
-  if(!openRouterModel){
-    return "Error..."
-  }
+  const stream = createStreamableValue('');
 
-  const completion = await openai.chat.completions.create({
-    model: openRouterModel,
-    messages: [...currMessages]
-  });
-  return completion.choices[0].message.content || "Error, something bad happened"
+  (async () => {
+    const { textStream } = streamText({
+      model: openrouter(modelMap[model]),
+      messages: currMessages
+    });
+
+    for await (const delta of textStream) {
+      stream.update(delta);
+    }
+
+    stream.done();
+  })();
+
+  return { output: stream.value };
 }

@@ -43,3 +43,7 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #5a5a5a;
 }
+
+ol {
+  margin-bottom: 10px;
+}

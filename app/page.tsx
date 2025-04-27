@@ -1,10 +1,11 @@
 "use client"
 
 import { sendPrompt } from "@/actions/chat";
-import { ReactElement, useState } from "react";
+import { ReactElement, useState, useRef } from "react";
 import { FaArrowUp, FaCaretDown, FaCaretUp, FaGoogle } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { SiClaude, SiOpenai } from "react-icons/si";
+import { readStreamableValue } from "ai/rsc";
 
 import Messages from "./components/messages";
 
@@ -37,19 +38,45 @@ export default function Home() {
   const [model, setModel] = useState<string>("Gemini 2.0 Flash")
   const [selectingModel, setSelectingModel] = useState<boolean>(false)
   const [completions, setCompletions] = useState<Completion[]>([])
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   async function handleSubmit() {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+    
     setPrompt("")
     setCompletions(currCompletions => [...currCompletions, {prompt, response: ""}])
-    const response = await sendPrompt(prompt, completions, model)
-    setCompletions(currCompletions =>
-      currCompletions.map(completion =>
-        completion.prompt === prompt ? { ...completion, response: response } : completion
-      )
-    )
-  }
+    const { output } = await sendPrompt(prompt, completions, model)
+    let fullText = ''
 
+    for await (const delta of readStreamableValue(output)) {
+      if (signal.aborted) {
+        break;
+      }
+      fullText += delta
+      setCompletions(prev => {
+        const curr = [...prev]
+        curr[curr.length-1].response = fullText 
+        return curr
+        })
+    }
+    if (!signal.aborted) {
+      setCompletions(prev => {
+        const curr = [...prev]
+        curr[curr.length-1].response = fullText 
+        return curr
+        })
+    }
+  }
+    
   function handleClear() {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
     setCompletions([])
   }
 
