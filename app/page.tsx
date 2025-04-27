@@ -70,6 +70,8 @@ export default function Home() {
         return curr
         })
     }
+
+    console.log(fullText)
   }
 
   function handleClear() {

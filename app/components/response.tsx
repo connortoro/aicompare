@@ -86,13 +86,14 @@ export default function LlmResponse({ response }: ResponseProps) {
                           typeof child === 'string' ? child.trim() !== '' : true
                         );
 
+                        console.log(children)
                         if (!hasContent) {
                           return null; // Don't render anything if there's no real content
                         }
 
                         return (
-                          <li className="my-2" {...props}>
-                            • {children}
+                          <li className="my-8 pl-8 flex flex-row" {...props}>
+                            <span className='text-2xl text-neutral-300 pr-1'>•</span> {children}
                           </li>
                         );
                       },
@@ -106,6 +107,12 @@ export default function LlmResponse({ response }: ResponseProps) {
                         <ol className="my-2" {...props}> {/* Adds margin top and bottom */}
                           {children}
                         </ol>
+                      ),
+                      hr:({children}) => (
+                        <div className='w-full h-[4px] bg-neutral-800 my-8'>{children}</div>
+                      ),
+                      strong:({children}) => (
+                        <strong className='text-white'>{children}</strong>
                       )
                     }}
                   >

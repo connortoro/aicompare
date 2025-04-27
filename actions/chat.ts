@@ -28,7 +28,7 @@ const modelMap: Record<string, string> = {
 export async function sendPrompt(message: string, completions: Completion[], model: string) {
 
   const currMessages: CoreMessage[] = [
-    { role: 'system', content: 'You are a helpful, concise assistant.' }
+    { role: 'system', content: 'You are a helpful, concise assistant. you separate relavent chunks with a \'---\' as a separator' }
   ];
   for(const completion of completions){
     currMessages.push({ role: 'user', content: completion.prompt })
