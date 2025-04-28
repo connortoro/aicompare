@@ -61,11 +61,11 @@ export default function LlmResponse({ response }: ResponseProps) {
   return (
     <div className="flex flex-row justify-start items-start w-full">
               {response === "" ? (
-                <div className="p-[.8rem] bg-[#222222] rounded-xl break-words text-2xl animate-pulse">
+                <div className="p-[1rem] bg-[#222222] rounded-xl break-words text-2xl animate-pulse">
                   • • •
                 </div>
               ) : (
-                <div className="p-[.8rem] bg-[#222222] rounded-xl  xl:text-lg text-md max-w-[83%] space-y-6">
+                <div className="p-[1rem] bg-[#222222] rounded-xl  xl:text-lg text-md max-w-[83%] space-y-6">
                   <ReactMarkdown
                     rehypePlugins={[rehypeHighlight]}
                     components={{
@@ -81,30 +81,30 @@ export default function LlmResponse({ response }: ResponseProps) {
                         </pre>
                       ),
                       li: ({ children, ...props }) => {
-                        // Check if children exist and are not just whitespace
                         const hasContent = React.Children.toArray(children).some(child =>
                           typeof child === 'string' ? child.trim() !== '' : true
                         );
 
                         console.log(children)
                         if (!hasContent) {
-                          return null; // Don't render anything if there's no real content
+                          return null; 
                         }
 
                         return (
-                          <li className="my-8 pl-8 flex flex-row" {...props}>
-                            <span className='text-2xl text-neutral-300 pr-1'>•</span> {children}
+                          <li className="my-8 flex items-start" {...props}>
+                            <span className="text-2xl text-neutral-300 pr-2 inline-block flex-shrink-0">•</span>
+                            <div className="flex-grow">{children}</div>
                           </li>
                         );
                       },
 
                       ul: ({ children, ...props }) => (
-                        <ul className="my-2" {...props}> {/* Adds margin top and bottom */}
+                        <ul className="my-2" {...props}> 
                           {children}
                         </ul>
                       ),
                       ol: ({ children, ...props }) => (
-                        <ol className="my-2" {...props}> {/* Adds margin top and bottom */}
+                        <ol className="my-2" {...props}> 
                           {children}
                         </ol>
                       ),
