@@ -1,12 +1,11 @@
 "use client"
 
 import { sendPrompt } from "@/actions/chat";
-import { ReactElement, useState, useRef } from "react";
+import { ReactElement, useState, useRef, useEffect } from "react";
 import { FaArrowUp, FaCaretDown, FaCaretUp, FaGoogle } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { SiClaude, SiOpenai } from "react-icons/si";
 import { readStreamableValue } from "ai/rsc";
-
 import Messages from "./components/messages";
 
 type Completion = {
@@ -32,12 +31,10 @@ const iconMap: Record<string, ReactElement> = {
   "Claude 3.5 Sonnet": <SiClaude className="text-xl"/>
 }
 
-
 export default function Home() {
   const [prompt, setPrompt] = useState<string>("")
   const [model, setModel] = useState<string>("Gemini 2.0 Flash")
   const [selectingModel, setSelectingModel] = useState<boolean>(false)
-  const [completions, setCompletions] = useState<Completion[]>([])
   const abortControllerRef = useRef<AbortController | null>(null);
 
   async function handleSubmit() {
@@ -70,7 +67,6 @@ export default function Home() {
         return curr
         })
     }
-
     console.log(fullText)
   }
 
@@ -81,6 +77,30 @@ export default function Home() {
     }
     setCompletions([])
   }
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+    const savedCompletions = localStorage.getItem('completions');
+    if (savedCompletions) {
+      setCompletions(JSON.parse(savedCompletions));
+    }
+    const savedModel = localStorage.getItem('model');
+    if(savedModel) {
+      setModel(savedModel)
+    }
+  }, []);
+
+  const [completions, setCompletions] = useState<Completion[]>([])
+  
+  useEffect(() => {
+    localStorage.setItem('completions', JSON.stringify(completions));
+  }, [completions]);
+
+  useEffect(() => {
+    localStorage.setItem('model', model);
+  }, [model]);
 
   return (
     <div className="flex flex-col justify-start items-center h-full text-neutral-200 w-full bg-neutral-900">

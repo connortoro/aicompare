@@ -12,9 +12,6 @@ type MessageProps = {
   completions: Completion[]
 }
 
-
-
-
 export default function Messages({ completions }: MessageProps) {
   return (
     <div className="flex flex-col 2xl:w-[70rem] xl:w-[60rem] md:w-[50rem] justify-start items-center bg-neutral-900 rounded-xl p-[2rem] overflow-y-auto space-y-6 custom-scrollbar text-neutral-200">
