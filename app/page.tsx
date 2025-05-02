@@ -35,9 +35,16 @@ export default function Home() {
   const [prompt, setPrompt] = useState<string>("")
   const [model, setModel] = useState<string>("Gemini 2.0 Flash")
   const [selectingModel, setSelectingModel] = useState<boolean>(false)
+  const [isStreaming, setIsStreaming] = useState(false)
   const abortControllerRef = useRef<AbortController | null>(null);
 
+
   async function handleSubmit() {
+    if(prompt === "" || isStreaming){
+      return
+    }
+    setIsStreaming(true)
+
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -67,7 +74,7 @@ export default function Home() {
         return curr
         })
     }
-    console.log(fullText)
+    setIsStreaming(false)
   }
 
   function handleClear() {
@@ -110,8 +117,8 @@ export default function Home() {
 
       {/* input section */}
       <div className="flex flex-col 2xl:w-[70rem] xl:w-[60rem] md:w-[50rem] w-full space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 pt-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-b-1 border-x-2 border-neutral-800">
-        <div className="flex flex-row justify-center items-center space-x-4 w-full">
-          <div className="relative text-sm hover:cursor-pointer outline-1 outline-neutral-700 p-2 rounded-xl bg-neutral-800/40 backdrop-blur-md mr-[3rem] font-semibold">
+        <div className="flex flex-row justify-around items-center space-x-4 w-full">
+          <div className="relative text-sm hover:cursor-pointer outline-1 outline-neutral-700 p-2 rounded-xl bg-neutral-800/40 backdrop-blur-md font-semibold">
             <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[13rem] h-[2.5rem] text-sm text-neutral-300 flex flex-row items-center justify-center space-x-4"><div>{model}</div>{iconMap[model]} <div>{selectingModel ? <FaCaretUp className="text-xl text-neutral-400"/> : <FaCaretDown className="text-xl"/>}</div></button>
             {selectingModel && <div className="outline-2 outline-neutral-800/50 flex flex-col items-start  absolute bottom-full w-[15rem] bg-neutral-600/10 backdrop-blur-sm  space-y-4 mb-[1rem] p-[1rem] left-[-10] rounded-xl hover:cursor-default">
               {models.map(model => {
@@ -143,10 +150,10 @@ export default function Home() {
                 handleSubmit()
               }
             }}
-            className="bg-neutral-800/80 resize-none w-[60%] min-h-[7.5rem] rounded-t-xl p-[.6rem] px-[.8rem] text-md focus:outline-none focus:ring-2 ring-neutral-800"
+            className="bg-neutral-800/80 resize-none w-[60%] min-h-[8rem] rounded-t-xl p-[.6rem] px-[.8rem] text-md focus:outline-none focus:ring-2 ring-neutral-800"
           ></textarea>
           <div className="space-y-2 text-lg flex flex-col item-center justify-center">
-            <button onClick={handleSubmit}className="text-neutral-200 p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer text-md"><FaArrowUp /></button>
+            <button onClick={() => handleSubmit()}className="flex flex-row items-center justify-center text-neutral-200 p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer text-md"><FaArrowUp /></button>
             <button onClick={handleClear} className="flex flex-row items-center justify-center text-neutral-400 text-xl p-[1rem] scale-[.9] bg-neutral-800 rounded-xl hover:cursor-pointer"><BiTrash/></button>
           </div>
         </div>
