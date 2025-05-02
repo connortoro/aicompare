@@ -16,7 +16,7 @@ type Completion = {
 }
 
 const modelMap: Record<string, string> = {
-  "Gemini 2.0 Flash": "google/gemini-2.0-flash-001",
+  "Gemini 2.5 Flash": "google/gemini-2.5-flash-preview",
   "Gemini 2.5 Pro": "google/gemini-2.5-pro-preview-03-25",
   "GPT-4.1": "openai/gpt-4.1",
   "o4-mini": "openai/o4-mini",
@@ -28,7 +28,7 @@ const modelMap: Record<string, string> = {
 export async function sendPrompt(message: string, completions: Completion[], model: string) {
 
   const currMessages: CoreMessage[] = [
-    { role: 'system', content: 'You are a helpful, concise assistant. you separate relavent chunks with a \'---\' as a separator' }
+    { role: 'system', content: 'You are a helpful assistant'}
   ];
   for(const completion of completions){
     currMessages.push({ role: 'user', content: completion.prompt })
