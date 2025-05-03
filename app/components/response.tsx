@@ -28,10 +28,11 @@ type CodeProps = React.HTMLAttributes<HTMLElement> & {
   node?: Element;
   children?: React.ReactNode;
 };
+
 const Code = ({ className, children, ...props }: CodeProps) => {
   const [copied, setCopied] = useState(false);
   if (!className) {
-    return <code {...props}>{children}</code>;
+    return <code className='bg-[#282C34] p-1 rounded-sm text-white' {...props}>{children}</code>;
   }
 
   const handleCopy = () => {
@@ -65,7 +66,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                   • • •
                 </div>
               ) : (
-                <div className="p-[1rem] bg-[#222222] rounded-xl  xl:text-lg text-md max-w-[83%] space-y-6">
+                <div className="p-[1rem] bg-[#222222] rounded-xl  lg:text-lg text-md max-w-[83%] space-y-6">
                   <ReactMarkdown
                     rehypePlugins={[rehypeHighlight]}
                     components={{

@@ -22,6 +22,7 @@ const modelMap: Record<string, string> = {
   "o4-mini": "openai/o4-mini",
   "Claude 3.7 Sonnet": "anthropic/claude-3.7-sonnet",
   "Claude 3.5 Sonnet": "anthropic/claude-3.5-sonnet",
+  "DeepSeek V3": "deepseek/deepseek-chat-v3-0324"
 }
 
 
@@ -30,6 +31,7 @@ export async function sendPrompt(message: string, completions: Completion[], mod
   const currMessages: CoreMessage[] = [
     { role: 'system', content: 'You are a helpful assistant'}
   ];
+
   for(const completion of completions){
     currMessages.push({ role: 'user', content: completion.prompt })
     currMessages.push({ role: 'assistant', content: completion.response })

@@ -7,6 +7,7 @@ import { SiClaude, SiOpenai } from "react-icons/si";
 import { readStreamableValue } from "ai/rsc";
 import Messages from "./components/messages";
 import { BiTrash } from "react-icons/bi";
+import Image from "next/image";
 
 type Completion = {
   prompt: string,
@@ -20,6 +21,7 @@ const models = [
   "o4-mini",
   "Claude 3.7 Sonnet",
   "Claude 3.5 Sonnet",
+  "DeepSeek V3"
 ]
 
 const iconMap: Record<string, ReactElement> = {
@@ -28,7 +30,8 @@ const iconMap: Record<string, ReactElement> = {
   "GPT-4.1": <SiOpenai className="text-xl"/>,
   "o4-mini": <SiOpenai className="text-xl"/>,
   "Claude 3.7 Sonnet": <SiClaude className="text-xl"/>,
-  "Claude 3.5 Sonnet": <SiClaude className="text-xl"/>
+  "Claude 3.5 Sonnet": <SiClaude className="text-xl"/>,
+  "DeepSeek V3": <Image className="white-svg" src={'/deepseek.svg'} alt="DeepSeek" width={21} height={21}/>
 }
 
 export default function Home() {
@@ -116,7 +119,7 @@ export default function Home() {
       <Messages completions={completions}/>
 
       {/* input section */}
-      <div className="flex flex-col 2xl:w-[70rem] xl:w-[60rem] md:w-[50rem] w-full space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 pt-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-b-1 border-x-2 border-neutral-800">
+      <div className="flex flex-col 2xl:w-[70rem]  md:w-[60rem] w-full space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 pt-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-b-1 border-x-2 border-neutral-800">
         <div className="flex flex-row justify-around items-center space-x-4 w-full">
           <div className="relative text-sm hover:cursor-pointer outline-1 outline-neutral-700 p-2 rounded-xl bg-neutral-800/40 backdrop-blur-md font-semibold">
             <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[13rem] h-[2.5rem] text-sm text-neutral-300 flex flex-row items-center justify-center space-x-4"><div>{model}</div>{iconMap[model]} <div>{selectingModel ? <FaCaretUp className="text-xl text-neutral-400"/> : <FaCaretDown className="text-xl"/>}</div></button>

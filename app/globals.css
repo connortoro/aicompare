@@ -43,3 +43,8 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #5a5a5a;
 }
+
+
+.white-svg {
+  filter: brightness(0) invert(1);
+}
