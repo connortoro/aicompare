@@ -66,7 +66,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                   • • •
                 </div>
               ) : (
-                <div className="p-[1rem] bg-[#222222] rounded-xl  lg:text-lg text-md max-w-[83%] space-y-6">
+                <div className="p-[1rem] bg-[#222222] rounded-xl  lg:text-lg text-md max-w-[100%] space-y-6">
                   <ReactMarkdown
                     rehypePlugins={[rehypeHighlight]}
                     components={{
