@@ -92,7 +92,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                         }
 
                         return (
-                          <li className="my-4 flex items-start ml-5" {...props}>
+                          <li className="my-2 flex items-start ml-5" {...props}>
                             <span className="text-xl text-neutral-300 pr-2 inline-block flex-shrink-0">•</span>
                             <div className="flex-grow">{children}</div>
                           </li>
@@ -113,7 +113,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                         <div className='w-full h-[4px] bg-neutral-800 my-8'>{children}</div>
                       ),
                       strong:({children}) => (
-                        <strong className='text-neutral-100 text-[1.1rem]'>{children}</strong>
+                        <strong className='text-neutral-100 text-[1.2rem]'>{children}</strong>
                       )
                     }}
                   >

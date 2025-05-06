@@ -21,7 +21,7 @@ export default function Messages({ completions }: MessageProps) {
           <h2 className="text-neutral-300 text-lg">pick a model down below and ask a question!</h2>
         </div>
       )}
-      <div className='space-y-8 pb-[10rem] w-full'>
+      <div className='space-y-10 pb-[10rem] w-full'>
       {completions.map((comp, i) => {
         return (
           <div className="flex flex-col justify-start items-center w-full text-sm" key={i}>
