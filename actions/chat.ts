@@ -17,7 +17,7 @@ type Completion = {
 
 const modelMap: Record<string, string> = {
   "Gemini 2.5 Flash": "google/gemini-2.5-flash-preview",
-  "Gemini 2.5 Pro": "google/gemini-2.5-pro-preview-03-25",
+  "Gemini 2.5 Pro": "google/gemini-2.5-pro-preview",
   "GPT-4.1": "openai/gpt-4.1",
   "o4-mini": "openai/o4-mini",
   "Claude 3.7 Sonnet": "anthropic/claude-3.7-sonnet",
