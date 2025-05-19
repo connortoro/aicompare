@@ -36,7 +36,7 @@ const iconMap: Record<string, ReactElement> = {
 
 export default function Home() {
   const [prompt, setPrompt] = useState<string>("")
-  const [model, setModel] = useState<string>("Gemini 2.5 Flash")
+  const [model, setModel] = useState<string>(models[0])
   const [selectingModel, setSelectingModel] = useState<boolean>(false)
   const [isStreaming, setIsStreaming] = useState(false)
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -113,13 +113,12 @@ export default function Home() {
   }, [model]);
 
   return (
-    <div className="flex flex-col justify-start items-center h-full text-neutral-200 w-full bg-neutral-900">
-      <h2 className="fixed top-4 left-6 text-xl font-semibold text-neutral-400">ai_compare</h2>
+    <div className="flex flex-col justify-start items-center h-full text-neutral-200 w-full bg-neutral-900 px-4">
       {/* messages section */}
       <Messages completions={completions}/>
 
       {/* input section */}
-      <div className="flex flex-col 2xl:w-[70rem]  md:w-[60rem] w-full space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4 pt-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-b-1 border-x-2 border-neutral-800">
+      <div className="flex flex-col max-w-[75rem] w-[93%] space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4  pt-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-b-1 border-x-2 border-neutral-800">
         <div className="flex flex-row justify-around items-center space-x-4 w-full">
           <div className="relative text-sm hover:cursor-pointer outline-1 outline-neutral-700 p-2 rounded-xl bg-neutral-800/40 backdrop-blur-md font-semibold">
             <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[13rem] h-[2.5rem] text-sm text-neutral-300 flex flex-row items-center justify-center space-x-4"><div>{model}</div>{iconMap[model]} <div>{selectingModel ? <FaCaretUp className="text-xl text-neutral-400"/> : <FaCaretDown className="text-xl"/>}</div></button>

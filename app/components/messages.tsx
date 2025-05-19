@@ -14,7 +14,7 @@ type MessageProps = {
 
 export default function Messages({ completions }: MessageProps) {
   return (
-    <div className="flex flex-col 2xl:w-[70rem] md:w-[60rem] justify-start items-center bg-neutral-900 rounded-xl p-[2rem] overflow-y-auto space-y-6 custom-scrollbar text-neutral-200">
+    <div className="flex flex-col w-full max-w-[85rem] justify-start items-center bg-neutral-900 rounded-xl p-[2rem] overflow-y-auto space-y-6 custom-scrollbar text-neutral-200">
       {completions.length == 0 && (
         <div className="flex flex-col items-center justify-center space-y-8">
           <h1 className="text-3xl font-bold mt-[80%]">Hey, what&apos;s up?</h1>
