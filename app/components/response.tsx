@@ -32,7 +32,7 @@ type CodeProps = React.HTMLAttributes<HTMLElement> & {
 const Code = ({ className, children, ...props }: CodeProps) => {
   const [copied, setCopied] = useState(false);
   if (!className) {
-    return <code className='bg-[#282C34] p-1 rounded-sm text-[#98C379]' {...props}>{children}</code>;
+    return <code className='bg-[#191919] p-2 rounded-md text-white' {...props}>{children}</code>;
   }
 
   const handleCopy = () => {
@@ -43,14 +43,14 @@ const Code = ({ className, children, ...props }: CodeProps) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative leading-normal">
       <button
         onClick={handleCopy}
         className="absolute top-2 right-2 p-2 hover:bg-neutral-800 rounded text-neutral-300 hover:cursor-pointer"
       >
         {copied ? <FaCheck className='text-[#98C379]'/> : <FaRegCopy />}
       </button>
-      <code className={`${className} break-all rounded-xl block pt-8`} {...props}>
+      <code className={`${className} rounded-xl pt-8`} {...props}>
         {children}
       </code>
     </div>
@@ -66,7 +66,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                   • • •
                 </div>
               ) : (
-                <div className="p-[1rem] bg-[#222222] rounded-xl  lg:text-lg text-md max-w-[100%] space-y-6">
+                <div className="p-[1rem] bg-[#222222] rounded-xl  lg:text-lg text-md max-w-[100%] space-y-6 leading-loose">
                   <ReactMarkdown
                     rehypePlugins={[rehypeHighlight]}
                     components={{
@@ -77,7 +77,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                       ),
                       code: Code,
                       pre: ({children, ...props}) => (
-                        <pre className="whitespace-pre-wrap break-words overflow-x-hidden relative" {...props}>
+                        <pre className="whitespace-pre break-words overflow-x-auto relative" {...props}>
                           {children}
                         </pre>
                       ),
@@ -113,7 +113,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                         <div className='w-full h-[4px] bg-neutral-800 my-8'>{children}</div>
                       ),
                       strong:({children}) => (
-                        <strong className='text-neutral-100 text-[1.2rem]'>{children}</strong>
+                        <strong className='text-neutral-100 md:text-[1.4rem]'>{children}</strong>
                       )
                     }}
                   >

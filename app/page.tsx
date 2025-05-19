@@ -36,7 +36,7 @@ const iconMap: Record<string, ReactElement> = {
 
 export default function Home() {
   const [prompt, setPrompt] = useState<string>("")
-  const [model, setModel] = useState<string>("Gemini 2.0 Flash")
+  const [model, setModel] = useState<string>("Gemini 2.5 Flash")
   const [selectingModel, setSelectingModel] = useState<boolean>(false)
   const [isStreaming, setIsStreaming] = useState(false)
   const abortControllerRef = useRef<AbortController | null>(null);
