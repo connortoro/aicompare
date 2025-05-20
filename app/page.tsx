@@ -113,7 +113,7 @@ export default function Home() {
   }, [model]);
 
   return (
-    <div className="flex flex-col justify-start items-center h-full text-neutral-200 w-full bg-neutral-900 px-4">
+    <div className="flex flex-col justify-start items-center h-full text-neutral-200 w-full bg-neutral-900 ">
       {/* messages section */}
       <Messages completions={completions}/>
 
