@@ -32,7 +32,7 @@ type CodeProps = React.HTMLAttributes<HTMLElement> & {
 const Code = ({ className, children, ...props }: CodeProps) => {
   const [copied, setCopied] = useState(false);
   if (!className) {
-    return <code className='bg-[#191919] p-2 rounded-md text-white' {...props}>{children}</code>;
+    return <code className='bg-[#171717] p-2 rounded-md text-white font-semibold' {...props}>{children}</code>;
   }
 
   const handleCopy = () => {
@@ -42,15 +42,16 @@ const Code = ({ className, children, ...props }: CodeProps) => {
     setTimeout(() => setCopied(false), 500);
   };
 
+  const language = className.split("-")[1]
+
   return (
-    <div className="relative leading-normal">
-      <button
-        onClick={handleCopy}
-        className="absolute top-2 right-2 p-2 hover:bg-neutral-800 rounded text-neutral-300 hover:cursor-pointer"
-      >
-        {copied ? <FaCheck className='text-[#98C379]'/> : <FaRegCopy />}
-      </button>
-      <code className={`${className} rounded-xl pt-8`} {...props}>
+    <div className=" leading-normal">
+      <div className='h-[3rem] bg-neutral-800 rounded-t-xl flex flex-row justify-between items-center'>
+        <span className='p-4 pt-'>{language}</span>
+        <button onClick={handleCopy}className="p-2 mr-2 hover:bg-neutral-800 rounded text-neutral-300 hover:cursor-pointer">{copied ? <FaCheck className='text-[#98C379]'/> : <FaRegCopy />}</button>
+      </div>
+
+      <code className={`${className} rounded-b-xl pt-8`} {...props}>
         {children}
       </code>
     </div>
@@ -66,7 +67,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                   • • •
                 </div>
               ) : (
-                <div className="p-[1rem] bg-[#222222] rounded-xl  lg:text-lg text-md max-w-[100%] space-y-6 leading-loose">
+                <div className="p-[1rem]  rounded-xl max-w-[100%] space-y-6 leading-loose">
                   <ReactMarkdown
                     rehypePlugins={[rehypeHighlight]}
                     components={{
