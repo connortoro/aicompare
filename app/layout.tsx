@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -11,6 +11,9 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+const inter = Inter({ subsets: ['latin'] });
+
 
 export const metadata: Metadata = {
   title: "aicompare",
@@ -25,9 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-800 h-[100%]`}
+        className={`${inter.className} antialiased bg-neutral-800 h-[100%]`}
       >
-        <div className="absolute inset-0 bg-red-500 opacity-[1%] pointer-events-none z-50"></div>
+        <div className="absolute inset-0 bg-red-500 opacity-[.009] pointer-events-none z-50"></div>
         {children}
       </body>
     </html>
