@@ -32,7 +32,7 @@ type CodeProps = React.HTMLAttributes<HTMLElement> & {
 const Code = ({ className, children, ...props }: CodeProps) => {
   const [copied, setCopied] = useState(false);
   if (!className) {
-    return <code className='bg-[#171717] p-2 rounded-md text-white font-semibold' {...props}>{children}</code>;
+    return <code className='bg-[#232323] p-2 rounded-md text-white font-semibold' {...props}>{children}</code>;
   }
 
   const handleCopy = () => {
