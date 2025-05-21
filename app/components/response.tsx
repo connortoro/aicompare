@@ -1,5 +1,6 @@
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from "rehype-highlight";
+import remarkGfm from 'remark-gfm'
 import { FaCheck, FaRegCopy } from 'react-icons/fa';
 import type { Element } from "hast";
 import React, { useState } from 'react'
@@ -69,6 +70,7 @@ export default function LlmResponse({ response }: ResponseProps) {
               ) : (
                 <div className="p-[1rem]  rounded-xl max-w-[100%] space-y-6 leading-loose">
                   <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
                     rehypePlugins={[rehypeHighlight]}
                     components={{
                       p: ({children, ...props}) => (
@@ -115,7 +117,28 @@ export default function LlmResponse({ response }: ResponseProps) {
                       ),
                       strong:({children}) => (
                         <strong className='text-neutral-100 md:text-[1.4rem]'>{children}</strong>
-                      )
+                      ),
+                      thead:({children}) => (
+                        <thead className='border-b-2 border-neutral-400'>{children}</thead>
+                      ),
+                      tr:({children}) => (
+                        <tr className='border-b-2 border-neutral-800 my-2'>{children}</tr>
+                      ),
+                      th: ({children, ...props}) => (
+                        <th className="px-4 py-2 text-left font-semibold bg-neutral-900 text-neutral-100" {...props}>
+                          {children}
+                        </th>
+                      ),
+                      td: ({children, ...props}) => (
+                        <td className="px-4 py-2 text-neutral-200" {...props}>
+                          {children}
+                        </td>
+                      ),
+                      table: ({children, ...props}) => (
+                        <table className="w-full border-collapse my-4 rounded-lg overflow-hidden" {...props}>
+                          {children}
+                        </table>
+                      ),
                     }}
                   >
                     {response}
