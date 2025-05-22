@@ -4,6 +4,9 @@ import remarkGfm from 'remark-gfm'
 import { FaCheck, FaRegCopy } from 'react-icons/fa';
 import type { Element } from "hast";
 import React, { useState } from 'react'
+import 'katex/dist/katex.min.css';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 type ResponseProps = {
   response: string
@@ -70,8 +73,8 @@ export default function LlmResponse({ response }: ResponseProps) {
               ) : (
                 <div className="p-[1rem]  rounded-xl max-w-[100%] space-y-6 leading-loose">
                   <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeHighlight]}
+                    remarkPlugins={[remarkGfm, remarkMath]}
+                    rehypePlugins={[rehypeHighlight, rehypeKatex]}
                     components={{
                       p: ({children, ...props}) => (
                         <p className="whitespace-pre-wrap break-words" {...props}>
