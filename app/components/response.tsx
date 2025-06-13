@@ -91,8 +91,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                         const hasContent = React.Children.toArray(children).some(child =>
                           typeof child === 'string' ? child.trim() !== '' : true
                         );
-
-                        console.log(children)
+                        
                         if (!hasContent) {
                           return null;
                         }
