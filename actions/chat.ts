@@ -19,7 +19,7 @@ const modelMap: Record<string, string> = {
   "Gemini 2.5 Flash": "google/gemini-2.5-flash-preview",
   "Gemini 2.5 Pro": "google/gemini-2.5-pro-preview",
   "GPT-4.1": "openai/gpt-4.1",
-  "o3": "openai/o3-2025-04-16",
+  "o3": "openai/o3",
   "Claude 4 Sonnet": "anthropic/claude-sonnet-4",
   "Claude 4 Opus": "anthropic/claude-opus-4",
   "DeepSeek V3": "deepseek/deepseek-chat-v3-0324"
