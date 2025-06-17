@@ -120,9 +120,9 @@ export default function Home() {
       {/* input section */}
       <div className="flex flex-col max-w-[75rem] w-[93%] space-y-4 justify-center items-center bg-neutral-900/20 backdrop-blur-md rounded-t-4xl px-4  pt-7 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-t-2 border-b-1 border-x-2 border-[#202020]">
         <div className="flex flex-row justify-around items-center space-x-4 w-full">
-          <div className="relative text-md hover:cursor-pointer  p-2 rounded-xl  backdrop-blur-md font-semibold">
+          <div className="relative text-md hover:cursor-pointer  p-2 rounded-xl   font-semibold">
             <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[13rem] h-[2.5rem] text-md text-neutral-300 flex flex-row items-center justify-center space-x-4"><div>{model}</div>{iconMap[model]} <div>{selectingModel ? <FaCaretUp className="text-xl text-neutral-400"/> : <FaCaretDown className="text-xl"/>}</div></button>
-            {selectingModel && <div className="outline-2 outline-neutral-800/50 flex flex-col items-start  absolute bottom-full w-[15rem] bg-neutral-600/10 backdrop-blur-sm  space-y-4 mb-[1rem] p-[1rem] left-[-10] rounded-xl hover:cursor-default">
+            {selectingModel && <div className="outline-2 outline-neutral-800/50 flex flex-col items-start absolute bottom-full w-[15rem] bg-neutral-800/90 backdrop-blur-lg  space-y-4 mb-[1rem] p-[1rem] left-[-10] rounded-xl hover:cursor-default">
               {models.map(model => {
                 return(
                   <button
