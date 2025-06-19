@@ -46,7 +46,7 @@ const Code = ({ className, children, ...props }: CodeProps) => {
     setTimeout(() => setCopied(false), 500);
   };
 
-  const language = className.split("-")[1]
+  const language = className.split("-")[1] || ''
 
   return (
     <div className=" leading-normal">
