@@ -118,7 +118,7 @@ export default function Home() {
       <Messages completions={completions}/>
 
       {/* input section */}
-      <div className="flex flex-col max-w-[75rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/20 backdrop-blur-md rounded-t-4xl px-4  pt-5 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2">
+      <div className="flex flex-col max-w-[75rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/30 backdrop-blur-sm rounded-t-4xl px-4  pt-5 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-x-4 border-t-4 border-neutral-800/50 outline-2 outline-neutral-700/50">
         <div className="flex flex-row justify-around items-center space-x-4 w-full ">
           <div className="relative text-md hover:cursor-pointer  rounded-xl   font-semibold">
             <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[13rem] h-[2.5rem] text-md text-neutral-300 flex flex-row items-center justify-center space-x-4"><div>{model}</div>{iconMap[model]} <div>{selectingModel ? <FaCaretUp className="text-xl text-neutral-400"/> : <FaCaretDown className="text-xl"/>}</div></button>
@@ -152,7 +152,7 @@ export default function Home() {
                 handleSubmit()
               }
             }}
-            className="bg-neutral-800/80 resize-none w-full mr-12 min-h-[8rem] rounded-t-xl p-[.6rem] px-[.8rem] text-[1.1rem] focus:outline-none focus:ring-2 ring-neutral-800"
+            className="bg-neutral-800/90 resize-none w-full mr-12 min-h-[8rem] rounded-t-xl p-[.6rem] px-[.8rem] text-[1.1rem] focus:outline-none focus:ring-2 ring-neutral-800"
           ></textarea>
           <div className="space-y-2 text-lg flex flex-col item-center justify-center">
             <button onClick={() => handleSubmit()}className="flex flex-row items-center justify-center text-neutral-200 p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer text-md"><FaArrowUp /></button>
