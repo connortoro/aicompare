@@ -7,7 +7,6 @@ import { SiClaude, SiOpenai } from "react-icons/si";
 import { readStreamableValue } from "ai/rsc";
 import Messages from "./components/messages";
 import { BiTrash } from "react-icons/bi";
-import Image from "next/image";
 
 type Completion = {
   prompt: string,
@@ -17,21 +16,19 @@ type Completion = {
 const models = [
   "Gemini 2.5 Flash",
   "Gemini 2.5 Pro",
-  "GPT-4.1",
-  "o3",
+  "GPT-5",
+  "GPT-5 nano",
   "Claude 4 Sonnet",
   "Claude 4 Opus",
-  "DeepSeek V3"
 ]
 
 const iconMap: Record<string, ReactElement> = {
   "Gemini 2.5 Flash": <FaGoogle/>,
   "Gemini 2.5 Pro": <FaGoogle/>,
-  "GPT-4.1": <SiOpenai className="text-xl"/>,
-  "o3": <SiOpenai className="text-xl"/>,
+  "GPT-5": <SiOpenai className="text-xl"/>,
+  "GPT-5 nano": <SiOpenai className="text-xl"/>,
   "Claude 4 Sonnet": <SiClaude className="text-xl"/>,
   "Claude 4 Opus": <SiClaude className="text-xl"/>,
-  "DeepSeek V3": <Image className="white-svg" src={'/deepseek.svg'} alt="DeepSeek" width={21} height={21}/>
 }
 
 export default function Home() {
@@ -118,11 +115,11 @@ export default function Home() {
       <Messages completions={completions}/>
 
       {/* input section */}
-      <div className="flex flex-col max-w-[75rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/30 backdrop-blur-sm rounded-t-4xl px-4  pt-5 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-x-4 border-t-4 border-neutral-800/50 outline-2 outline-neutral-700/50">
+      <div className="flex flex-col max-w-[75rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/30 backdrop-blur-sm rounded-t-4xl px-4  pt-5 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-x-3 border-t-3 border-neutral-800/30 outline-2 outline-neutral-800/30">
         <div className="flex flex-row justify-around items-center space-x-4 w-full ">
           <div className="relative text-md hover:cursor-pointer  rounded-xl   font-semibold">
-            <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[13rem] h-[2.5rem] text-md text-neutral-300 flex flex-row items-center justify-center space-x-4"><div>{model}</div>{iconMap[model]} <div>{selectingModel ? <FaCaretUp className="text-xl text-neutral-400"/> : <FaCaretDown className="text-xl"/>}</div></button>
-            {selectingModel && <div className="outline-2 outline-neutral-800/50 flex flex-col items-start absolute bottom-full w-[15rem] bg-neutral-800/90 backdrop-blur-lg  space-y-4 mb-[1rem] p-[1rem] left-[-10] rounded-xl hover:cursor-default">
+            <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[13rem] h-[2.5rem] text-sm text-neutral-400 flex flex-row items-center justify-center space-x-4"><div>{model}</div>{iconMap[model]} <div>{selectingModel ? <FaCaretUp className="text-xl text-neutral-400"/> : <FaCaretDown className="text-xl"/>}</div></button>
+            {selectingModel && <div className=" flex flex-col items-start absolute bottom-full w-[15rem] bg-neutral-800/90 backdrop-blur-lg  space-y-4 mb-[1rem] p-[1rem] left-[-10] rounded-xl hover:cursor-default">
               {models.map(model => {
                 return(
                   <button
@@ -131,7 +128,7 @@ export default function Home() {
                       setModel(model);
                       setSelectingModel(false)
                     }}
-                    className="w-full hover:cursor-pointer opacity-100 outline-2 outline-neutral-500 p-[10px] rounded-xl font-semibold ">
+                    className="w-full hover:cursor-pointer opacity-100 p-[10px] rounded-xl font-semibold ">
                     <div className="flex flex-row justify-between items-center px-2 font-semibold">
                       {model}
                       {iconMap[model]}
