@@ -1,46 +1,33 @@
 "use client"
 
-import { sendPrompt } from "@/actions/chat";
-import { ReactElement, useState, useRef, useEffect } from "react";
-import { FaArrowUp, FaCaretDown, FaCaretUp, FaGoogle } from "react-icons/fa";
-import { SiClaude, SiOpenai } from "react-icons/si";
-import { readStreamableValue } from "ai/rsc";
+import { useState, useRef, useEffect } from "react";
+import ChatInput from "./components/chat-input";
 import Messages from "./components/messages";
-import { BiTrash } from "react-icons/bi";
+import {
+  DEFAULT_OPENROUTER_MODELS,
+  sanitizeModelList,
+} from "@/lib/model-utils";
 
 type Completion = {
   prompt: string,
   response: string
 }
 
-const models = [
-  "Gemini 2.5 Flash",
-  "Gemini 2.5 Pro",
-  "GPT-5",
-  "GPT-5 nano",
-  "Claude 4 Sonnet",
-  "Claude 4 Opus",
-]
-
-const iconMap: Record<string, ReactElement> = {
-  "Gemini 2.5 Flash": <FaGoogle/>,
-  "Gemini 2.5 Pro": <FaGoogle/>,
-  "GPT-5": <SiOpenai className="text-xl"/>,
-  "GPT-5 nano": <SiOpenai className="text-xl"/>,
-  "Claude 4 Sonnet": <SiClaude className="text-xl"/>,
-  "Claude 4 Opus": <SiClaude className="text-xl"/>,
-}
+const COMPLETIONS_STORAGE_KEY = "completions";
+const MODEL_STORAGE_KEY = "model";
+const MODEL_LIST_STORAGE_KEY = "modelList";
 
 export default function Home() {
   const [prompt, setPrompt] = useState<string>("")
-  const [model, setModel] = useState<string>(models[0])
-  const [selectingModel, setSelectingModel] = useState<boolean>(false)
+  const [model, setModel] = useState<string>(DEFAULT_OPENROUTER_MODELS[0])
+  const [models, setModels] = useState<string[]>(DEFAULT_OPENROUTER_MODELS)
   const [isStreaming, setIsStreaming] = useState(false)
+  const [completions, setCompletions] = useState<Completion[]>([])
   const abortControllerRef = useRef<AbortController | null>(null);
 
 
   async function handleSubmit() {
-    if(prompt === "" || isStreaming){
+    if(prompt.trim() === "" || isStreaming || !model){
       return
     }
     setIsStreaming(true)
@@ -51,30 +38,46 @@ export default function Home() {
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
 
+    const promptToSend = prompt;
     setPrompt("")
-    setCompletions(currCompletions => [...currCompletions, {prompt, response: ""}])
-    const { output } = await sendPrompt(prompt, completions, model)
+    setCompletions(currCompletions => [...currCompletions, {prompt: promptToSend, response: ""}])
     let fullText = ''
 
-    for await (const delta of readStreamableValue(output)) {
-      if (signal.aborted) {
-        break;
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: promptToSend, completions, model }),
+        signal,
+      });
+
+      if (!response.ok || !response.body) {
+        throw new Error("Failed to stream chat response");
       }
-      fullText += delta
-      setCompletions(prev => {
-        const curr = [...prev]
-        curr[curr.length-1].response = fullText
-        return curr
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done || signal.aborted) {
+          break;
+        }
+
+        fullText += decoder.decode(value, { stream: true });
+        setCompletions(prev => {
+          const curr = [...prev]
+          curr[curr.length-1].response = fullText
+          return curr
         })
+      }
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        console.error("Chat request failed:", error);
+      }
+    } finally {
+      setIsStreaming(false)
     }
-    if (!signal.aborted) {
-      setCompletions(prev => {
-        const curr = [...prev]
-        curr[curr.length-1].response = fullText
-        return curr
-        })
-    }
-    setIsStreaming(false)
   }
 
   function handleClear() {
@@ -83,30 +86,63 @@ export default function Home() {
       abortControllerRef.current = null;
     }
     setCompletions([])
+    setIsStreaming(false)
+  }
+
+  function handleAddModel(nextModel: string) {
+    setModels((currModels) => {
+      if (currModels.includes(nextModel)) {
+        return currModels;
+      }
+      return [nextModel, ...currModels];
+    });
+  }
+
+  function handleDeleteModel(targetModel: string) {
+    setModels((currModels) => {
+      const nextModels = currModels.filter((currModel) => currModel !== targetModel);
+      if (nextModels.length === 0) {
+        return DEFAULT_OPENROUTER_MODELS;
+      }
+      return nextModels;
+    });
   }
 
   useEffect(() => {
     if (typeof window === 'undefined') {
       return
     }
-    const savedCompletions = localStorage.getItem('completions');
+    const savedCompletions = localStorage.getItem(COMPLETIONS_STORAGE_KEY);
     if (savedCompletions) {
       setCompletions(JSON.parse(savedCompletions));
     }
-    const savedModel = localStorage.getItem('model');
-    if(savedModel) {
+    const savedModelListRaw = localStorage.getItem(MODEL_LIST_STORAGE_KEY);
+    const parsedModelList = savedModelListRaw ? JSON.parse(savedModelListRaw) : null;
+    if (Array.isArray(parsedModelList)) {
+      const cleanModelList = sanitizeModelList(parsedModelList);
+      if (cleanModelList.length > 0) {
+        setModels(cleanModelList);
+      }
+    }
+    const savedModel = localStorage.getItem(MODEL_STORAGE_KEY);
+    if(savedModel && sanitizeModelList([savedModel]).length > 0) {
       setModel(savedModel)
     }
   }, []);
 
-  const [completions, setCompletions] = useState<Completion[]>([])
-
   useEffect(() => {
-    localStorage.setItem('completions', JSON.stringify(completions));
+    localStorage.setItem(COMPLETIONS_STORAGE_KEY, JSON.stringify(completions));
   }, [completions]);
 
   useEffect(() => {
-    localStorage.setItem('model', model);
+    localStorage.setItem(MODEL_LIST_STORAGE_KEY, JSON.stringify(models));
+    if (!models.includes(model)) {
+      setModel(models[0] ?? DEFAULT_OPENROUTER_MODELS[0]);
+    }
+  }, [models, model]);
+
+  useEffect(() => {
+    localStorage.setItem(MODEL_STORAGE_KEY, model);
   }, [model]);
 
   return (
@@ -115,48 +151,18 @@ export default function Home() {
       <Messages completions={completions}/>
 
       {/* input section */}
-      <div className="flex flex-col max-w-[75rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/30 backdrop-blur-sm rounded-t-4xl px-4  pt-5 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-x-3 border-t-3 border-neutral-800/30 outline-2 outline-neutral-800/30">
-        <div className="flex flex-row justify-around items-center space-x-4 w-full ">
-          <div className="relative text-md hover:cursor-pointer  rounded-xl   font-semibold">
-            <button onClick={()=> setSelectingModel(!selectingModel)} className="hover:cursor-pointer w-[13rem] h-[2.5rem] text-sm text-neutral-400 flex flex-row items-center justify-center space-x-4"><div>{model}</div>{iconMap[model]} <div>{selectingModel ? <FaCaretUp className="text-xl text-neutral-400"/> : <FaCaretDown className="text-xl"/>}</div></button>
-            {selectingModel && <div className=" flex flex-col items-start absolute bottom-full w-[15rem] bg-neutral-800/90 backdrop-blur-lg  space-y-4 mb-[1rem] p-[1rem] left-[-10] rounded-xl hover:cursor-default">
-              {models.map(model => {
-                return(
-                  <button
-                  key={model}
-                    onClick={()=> {
-                      setModel(model);
-                      setSelectingModel(false)
-                    }}
-                    className="w-full hover:cursor-pointer opacity-100 p-[10px] rounded-xl font-semibold ">
-                    <div className="flex flex-row justify-between items-center px-2 font-semibold">
-                      {model}
-                      {iconMap[model]}
-                    </div>
-                  </button>
-                )
-              })}
-            </div>}
-          </div>
-          <textarea
-            value={prompt}
-            placeholder="Ask me something..."
-            onClick={()=> setSelectingModel(false)}
-            onChange={(e) => setPrompt(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                handleSubmit()
-              }
-            }}
-            className="bg-neutral-800/90 resize-none w-full mr-12 min-h-[8rem] rounded-t-xl p-[.6rem] px-[.8rem] text-[1.1rem] focus:outline-none focus:ring-2 ring-neutral-800"
-          ></textarea>
-          <div className="space-y-2 text-lg flex flex-col item-center justify-center">
-            <button onClick={() => handleSubmit()}className="flex flex-row items-center justify-center text-neutral-200 p-[1rem] bg-neutral-800 rounded-xl hover:cursor-pointer text-md"><FaArrowUp /></button>
-            <button onClick={handleClear} className="flex flex-row items-center justify-center text-neutral-400 text-xl p-[1rem] scale-[.9] bg-neutral-800 rounded-xl hover:cursor-pointer"><BiTrash/></button>
-          </div>
-        </div>
-      </div>
+      <ChatInput
+        prompt={prompt}
+        setPrompt={setPrompt}
+        onSubmit={handleSubmit}
+        onClear={handleClear}
+        isStreaming={isStreaming}
+        model={model}
+        models={models}
+        onSelectModel={setModel}
+        onDeleteModel={handleDeleteModel}
+        onAddModel={handleAddModel}
+      />
     </div>
   );
 }

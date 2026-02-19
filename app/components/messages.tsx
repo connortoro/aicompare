@@ -18,7 +18,7 @@ export default function Messages({ completions }: MessageProps) {
       {completions.length == 0 && (
         <div className="flex flex-col items-center justify-start space-y-8">
           <h1 className="text-3xl font-bold mt-[80%]">Hey, what&apos;s up?</h1>
-          <h2 className="text-neutral-300 text-lg">pick a model down below and ask a question!</h2>
+          <h2 className="text-neutral-300 text-lg">pick or add an OpenRouter model code below and ask a question!</h2>
         </div>
       )}
       <div className='space-y-10 pb-[10rem] w-full flex flex-col items-center justify-start'>
