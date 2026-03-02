@@ -73,3 +73,21 @@ body {
 .white-svg {
   filter: brightness(0) invert(1);
 }
+
+/* Modern dot grid matrix background */
+.dot-grid-bg {
+  background-color: rgb(23 23 23);
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.02) 1px, transparent 0);
+  background-size: 12px 12px;
+}
+
+/* Subtle animated gradient overlay for depth */
+.dot-grid-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.04) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 100%, rgba(168, 85, 247, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}

@@ -40,18 +40,18 @@ const GoogleLogoNeutral = () => (
 );
 
 const iconMapColored: Record<string, ReactElement> = {
-  openai: <SiOpenai className="text-lg text-emerald-500" />,
-  anthropic: <SiClaude className="text-lg text-orange-500" />,
+  openai: <SiOpenai className="text-xl text-emerald-500" />,
+  anthropic: <SiClaude className="text-xl text-orange-500" />,
   google: <GoogleLogo />,
-  meta: <SiMeta className="text-lg text-blue-500" />,
+  meta: <SiMeta className="text-xl text-blue-500" />,
   unknown: <BiBot className="text-xl text-neutral-400" />,
 };
 
 const iconMapNeutral: Record<string, ReactElement> = {
-  openai: <SiOpenai className="text-lg" />,
-  anthropic: <SiClaude className="text-lg" />,
+  openai: <SiOpenai className="text-xl" />,
+  anthropic: <SiClaude className="text-xl" />,
   google: <GoogleLogoNeutral />,
-  meta: <SiMeta className="text-lg" />,
+  meta: <SiMeta className="text-xl" />,
   unknown: <BiBot className="text-xl" />,
 };
 
@@ -112,7 +112,7 @@ export default function ModelSelector({
       </button>
 
       {isOpen && (
-        <div className="flex flex-col items-start absolute bottom-full w-[27rem] bg-neutral-800/95 backdrop-blur-lg mb-[0.9rem] p-[1rem] left-0 rounded-2xl border border-neutral-700/60 shadow-2xl">
+        <div className="flex flex-col items-start absolute bottom-full w-[27rem] bg-neutral-800 mb-[0.9rem] p-[1rem] left-0 rounded-2xl border border-neutral-700/60 shadow-2xl">
           <div className="w-full flex flex-row items-center gap-2">
             <input
               value={newModelInput}

@@ -1,23 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Syne } from "next/font/google";
 import "./globals.css";
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
-
 const inter = Inter({ subsets: ['latin'] });
+const syne = Syne({ 
+  subsets: ['latin'],
+  variable: '--font-syne',
+  weight: ['700', '800']
+});
 
 
 export const metadata: Metadata = {
-  title: "aicompare",
-  description: "compare ais",
+  title: "torochat",
+  description: "chat with ais",
 };
 
 export default function RootLayout({
@@ -28,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${inter.className} antialiased bg-neutral-800 h-[100%]`}
+        className={`${inter.className} ${syne.variable} antialiased bg-neutral-800 h-[100%]`}
       >
         <div className="absolute inset-0 bg-red-500 opacity-[.009] pointer-events-none z-50"></div>
         {children}
