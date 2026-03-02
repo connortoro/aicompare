@@ -33,7 +33,7 @@ export default function ChatInput({
   const [selectingModel, setSelectingModel] = useState(false);
 
   return (
-    <div className="flex flex-col max-w-[62rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/30 backdrop-blur-sm rounded-t-4xl px-4 pt-5 font-normal border-x-3 border-t-3 border-neutral-800/30 outline-2 outline-neutral-800/30 shrink-0">
+    <div className="flex flex-col max-w-[62rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/30 backdrop-blur-sm rounded-t-4xl px-4 pt-5 font-normal border-x-2 border-t-2 border-neutral-800/30 outline-2 outline-neutral-800/30 shrink-0">
       <div className="flex flex-row justify-around items-center space-x-4 w-full">
         <ModelSelector
           selectedModel={model}

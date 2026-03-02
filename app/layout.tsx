@@ -25,7 +25,6 @@ export default function RootLayout({
       <body
         className={`${inter.className} ${syne.variable} antialiased bg-neutral-800 h-[100%]`}
       >
-        <div className="absolute inset-0 bg-red-500 opacity-[.009] pointer-events-none z-50"></div>
         {children}
       </body>
     </html>

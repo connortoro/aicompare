@@ -41,7 +41,7 @@ export default function Sidebar({
         }`}
       >
         <div className="relative flex items-center justify-center p-4 border-b-2 border-neutral-800/30">
-          <span className="font-[var(--font-syne)] font-extrabold text-xl tracking-tight text-neutral-200">torochat</span>
+          <span className="font-[var(--font-syne)] font-extrabold text-xl tracking-tight text-neutral-200"><span className="text-neutral-600">/ </span>toro_chat</span>
           <button
             onClick={onToggle}
             className="absolute right-4 p-1.5 text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800 rounded-md"
