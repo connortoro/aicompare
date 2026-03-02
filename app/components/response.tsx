@@ -33,11 +33,14 @@ type CodeProps = React.HTMLAttributes<HTMLElement> & {
   children?: React.ReactNode;
 };
 
-const Code = ({ className, children, ...props }: CodeProps) => {
+const InlineCode = ({ className, children, ...props }: CodeProps) => (
+  <code className='bg-neutral-800 px-1.5 py-0.5 rounded text-white font-semibold' {...props}>
+    {children}
+  </code>
+);
+
+const CodeBlock = ({ className, children, ...props }: CodeProps) => {
   const [copied, setCopied] = useState(false);
-  if (!className) {
-    return <code className='bg-[#232323] p-2 rounded-md text-white font-semibold' {...props}>{children}</code>;
-  }
 
   const handleCopy = () => {
     const text = getTextFromNode(children)
@@ -46,22 +49,41 @@ const Code = ({ className, children, ...props }: CodeProps) => {
     setTimeout(() => setCopied(false), 500);
   };
 
-  const language = className.split("-")[1] || ''
+  const language = className?.split("-")[1] || ''
 
   return (
-    <div className=" leading-normal">
+    <div className="leading-normal my-4">
       <div className='h-[3rem] bg-neutral-800 rounded-t-xl flex flex-row justify-between items-center'>
-        <span className='p-4 pt-'>{language}</span>
-        <button onClick={handleCopy}className="p-2 mr-2 hover:bg-neutral-800 rounded text-neutral-300 hover:cursor-pointer">{copied ? <FaCheck className='text-[#98C379]'/> : <FaRegCopy />}</button>
+        <span className='p-4'>{language}</span>
+        <button onClick={handleCopy} className="p-2 mr-2 hover:bg-neutral-700 rounded text-neutral-300 hover:cursor-pointer">
+          {copied ? <FaCheck className='text-[#98C379]'/> : <FaRegCopy />}
+        </button>
       </div>
 
-      <code className={`${className} rounded-b-xl pt-8`} {...props}>
+      <code className={`${className || ''} rounded-b-xl p-4 bg-neutral-800 block`} {...props}>
         {children}
       </code>
     </div>
   );
 };
 
+const Code = (props: CodeProps) => {
+  const { children, className } = props;
+  
+  // Detect inline code based on content:
+  // - No newlines (inline code rarely has newlines)
+  // - Short length (inline code is typically short)
+  // - Or explicit inline prop
+  const text = getTextFromNode(children);
+  const hasNewlines = text.includes('\n');
+  const isShort = text.length < 100;
+  const isInline = props.inline === true || (!hasNewlines && isShort && !className?.includes('language-'));
+  
+  if (isInline) {
+    return <InlineCode {...props} />;
+  }
+  return <CodeBlock {...props} />;
+};
 
 export default function LlmResponse({ response }: ResponseProps) {
   return (
@@ -83,7 +105,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                       ),
                       code: Code,
                       pre: ({children, ...props}) => (
-                        <pre className="whitespace-pre break-words overflow-x-auto relative" {...props}>
+                        <pre className="whitespace-pre overflow-x-auto min-w-full" {...props}>
                           {children}
                         </pre>
                       ),
