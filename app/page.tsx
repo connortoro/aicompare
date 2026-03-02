@@ -147,10 +147,8 @@ export default function Home() {
 
   return (
     <div className="flex flex-col justify-start items-center h-full text-neutral-200 w-full bg-neutral-900 ">
-      {/* messages section */}
       <Messages completions={completions}/>
 
-      {/* input section */}
       <ChatInput
         prompt={prompt}
         setPrompt={setPrompt}

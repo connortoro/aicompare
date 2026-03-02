@@ -1,8 +1,8 @@
 export const DEFAULT_OPENROUTER_MODELS = [
-  "openai/gpt-5",
-  "anthropic/claude-sonnet-4.5",
-  "google/gemini-3-pro-preview",
+  "anthropic/claude-sonnet-4.6",
   "anthropic/claude-opus-4.6",
+  "openai/gpt-5.2",
+  "google/gemini-3-pro-preview",
 ];
 
 export type ModelProvider =
