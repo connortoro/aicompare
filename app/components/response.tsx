@@ -67,7 +67,7 @@ export default function LlmResponse({ response }: ResponseProps) {
   return (
     <div className="flex flex-row justify-start items-start w-full">
               {response === "" ? (
-                <div className="p-[1rem] bg-[#222222] rounded-xl break-words text-2xl animate-pulse">
+                <div className="p-[1rem] bg-[#222222] rounded-xl break-words text-xl animate-pulse">
                   • • •
                 </div>
               ) : (
@@ -98,7 +98,7 @@ export default function LlmResponse({ response }: ResponseProps) {
 
                         return (
                           <li className="flex items-start ml-5 my-2" {...props}>
-                            <span className="text-xl text-neutral-300 pr-2 inline-block flex-shrink-0">•</span>
+                            <span className="text-lg text-neutral-300 pr-2 inline-block flex-shrink-0">•</span>
                             <div className="flex-grow">{children}</div>
                           </li>
                         );
@@ -118,7 +118,7 @@ export default function LlmResponse({ response }: ResponseProps) {
                         <div className='w-full h-[4px] bg-neutral-800 my-8'>{children}</div>
                       ),
                       strong:({children}) => (
-                        <strong className='text-neutral-100 md:text-[1.4rem]'>{children}</strong>
+                        <strong className='text-neutral-100 md:text-[1.25rem]'>{children}</strong>
                       ),
                       thead:({children}) => (
                         <thead className='border-b-2 border-neutral-400'>{children}</thead>

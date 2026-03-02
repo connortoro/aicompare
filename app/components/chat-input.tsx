@@ -33,7 +33,7 @@ export default function ChatInput({
   const [selectingModel, setSelectingModel] = useState(false);
 
   return (
-    <div className="flex flex-col max-w-[75rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/30 backdrop-blur-sm rounded-t-4xl px-4 pt-5 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-x-3 border-t-3 border-neutral-800/30 outline-2 outline-neutral-800/30">
+    <div className="flex flex-col max-w-[70rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/30 backdrop-blur-sm rounded-t-4xl px-4 pt-5 font-normal fixed bottom-0 left-1/2 transform -translate-x-1/2 border-x-3 border-t-3 border-neutral-800/30 outline-2 outline-neutral-800/30">
       <div className="flex flex-row justify-around items-center space-x-4 w-full">
         <ModelSelector
           selectedModel={model}
@@ -58,9 +58,9 @@ export default function ChatInput({
               onSubmit();
             }
           }}
-          className="bg-neutral-800/90 resize-none w-full mr-8 min-h-[8rem] rounded-t-xl p-[.6rem] px-[.8rem] text-[1.1rem] focus:outline-none focus:ring-2 ring-neutral-800"
+          className="bg-neutral-800/90 resize-none w-full mr-8 min-h-[8rem] rounded-t-xl p-[.6rem] px-[.8rem] text-base focus:outline-none focus:ring-2 ring-neutral-800"
         />
-        <div className="space-y-2 text-lg flex flex-col items-center justify-center">
+        <div className="space-y-2 text-base flex flex-col items-center justify-center">
           <button
             onClick={onSubmit}
             disabled={isStreaming}
