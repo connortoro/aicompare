@@ -91,3 +91,11 @@ body {
   pointer-events: none;
   z-index: 0;
 }
+
+/* GPU acceleration for Firefox gradient rendering */
+.translate-z-0 {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

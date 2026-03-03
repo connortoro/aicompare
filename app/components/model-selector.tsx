@@ -115,7 +115,7 @@ export default function ModelSelector({
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="flex flex-col items-start w-[27rem] bg-neutral-800 mb-[0.9rem] p-[1rem] rounded-2xl border border-neutral-700/60 shadow-2xl">
+      <div className="flex flex-col items-start w-[27rem] bg-[#1e1e1e] mb-[0.9rem] p-[1rem] rounded-[1rem] border border-white/10">
         <div className="w-full flex flex-row items-center gap-2">
           <input
             value={newModelInput}
@@ -194,7 +194,7 @@ export default function ModelSelector({
       <button
         ref={buttonRef}
         onClick={onToggleOpen}
-        className="hover:cursor-pointer min-w-[14.5rem] h-[2.75rem] text-sm text-neutral-300 grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl px-3 bg-neutral-800/80 border border-neutral-700/60"
+        className="hover:cursor-pointer min-w-[14.5rem] h-[3.25rem] text-sm text-neutral-300 grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-2xl px-4 bg-neutral-900/40 border border-white/5 hover:border-white/10 hover:bg-neutral-900/60 transition-all shadow-sm"
       >
         <div className="flex flex-row items-center justify-start">
           {selectedIcon}

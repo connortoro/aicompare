@@ -33,7 +33,7 @@ export default function ChatInput({
   const [selectingModel, setSelectingModel] = useState(false);
 
   return (
-    <div className="flex flex-col max-w-[62rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/30 backdrop-blur-sm rounded-t-4xl px-4 pt-5 font-normal border-x-2 border-t-2 border-neutral-800/30 outline-2 outline-neutral-800/30 shrink-0">
+    <div className="flex flex-col max-w-[62rem] w-[93%] space-y-4 justify-center items-center bg-[#212121]/60 backdrop-blur-xl rounded-t-[1rem] px-5 pt-5 font-normal border-x-2 border-t-2 border-white/5 shrink-0 translate-z-0">
       <div className="flex flex-row justify-around items-center space-x-4 w-full">
         <ModelSelector
           selectedModel={model}
@@ -58,19 +58,19 @@ export default function ChatInput({
               onSubmit();
             }
           }}
-          className="bg-neutral-800/90 resize-none w-full mr-8 min-h-[8rem] rounded-t-xl p-[.6rem] px-[.8rem] text-base focus:outline-none focus:ring-2 ring-neutral-800"
+          className="bg-neutral-900/40 resize-none w-full mr-5 min-h-[8rem] rounded-t-xl p-4 text-base focus:outline-none border-x-1 border-t-1 border-white/5 shadow-inner focus:border-white/10 focus:bg-neutral-900/60 placeholder:text-neutral-500"
         />
         <div className="space-y-2 text-base flex flex-col items-center justify-center">
           <button
             onClick={onSubmit}
             disabled={isStreaming}
-            className="h-12 w-12 flex items-center justify-center text-neutral-200 bg-neutral-800 rounded-xl hover:cursor-pointer text-md disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-12 w-12 flex items-center justify-center text-neutral-200 bg-neutral-900/40 rounded-2xl border border-white/5 hover:border-white/10 hover:bg-neutral-900/60 hover:cursor-pointer text-md disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
           >
             <FaArrowUp />
           </button>
           <button
             onClick={onClear}
-            className="h-12 w-12 flex items-center justify-center text-neutral-400 text-xl bg-neutral-800 rounded-xl hover:cursor-pointer"
+            className="h-12 w-12 flex items-center justify-center text-neutral-400 text-xl bg-neutral-900/40 rounded-2xl border border-white/5 hover:border-white/10 hover:text-neutral-200 hover:bg-neutral-900/60 hover:cursor-pointer transition-all shadow-sm"
           >
             <BiTrash />
           </button>
