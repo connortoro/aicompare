@@ -83,6 +83,75 @@ export default function Home() {
     });
   }
 
+  async function handleEditPrompt(index: number, newText: string) {
+    if (newText.trim() === "" || !currentConversationId) return;
+
+    // Cancel any in-flight stream
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsStreaming(false);
+
+    // Slice completions up to (not including) the edited index, then add the edited prompt with empty response
+    const slicedCompletions = completions.slice(0, index);
+    const newCompletion: Completion = { prompt: newText, response: "" };
+
+    setConversations(prev => prev.map(c => {
+      if (c.id === currentConversationId) {
+        return {
+          ...c,
+          completions: [...slicedCompletions, newCompletion],
+          updatedAt: Date.now(),
+        };
+      }
+      return c;
+    }));
+
+    // Stream the response for the edited prompt
+    setIsStreaming(true);
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+    let fullText = "";
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: newText, completions: slicedCompletions, model }),
+        signal,
+      });
+
+      if (!response.ok || !response.body) {
+        throw new Error("Failed to stream chat response");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done || signal.aborted) break;
+
+        fullText += decoder.decode(value, { stream: true });
+        setConversations(prev => prev.map(c => {
+          if (c.id === currentConversationId) {
+            const newCompletions = [...c.completions];
+            newCompletions[newCompletions.length - 1].response = fullText;
+            return { ...c, completions: newCompletions };
+          }
+          return c;
+        }));
+      }
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        console.error("Edit prompt request failed:", error);
+      }
+    } finally {
+      setIsStreaming(false);
+    }
+  }
+
   async function handleSubmit() {
     if(prompt.trim() === "" || isStreaming || !model){
       return
@@ -268,7 +337,7 @@ export default function Home() {
       />
       <div className={`dot-grid-bg relative flex flex-col h-full text-neutral-200 flex-1 overflow-hidden transition-all duration-300 ${sidebarOpen ? "pl-0" : ""}`}>
         <div className="flex-1 overflow-y-auto relative z-10">
-          <Messages completions={completions}/>
+          <Messages completions={completions} onEditPrompt={handleEditPrompt}/>
         </div>
         <div className="flex justify-center pb-0">
           <ChatInput

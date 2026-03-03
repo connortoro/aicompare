@@ -10,9 +10,10 @@ type Completion = {
 
 type MessageProps = {
   completions: Completion[]
+  onEditPrompt: (index: number, newText: string) => void
 }
 
-export default function Messages({ completions }: MessageProps) {
+export default function Messages({ completions, onEditPrompt }: MessageProps) {
   return (
     <div className="flex flex-col w-full justify-start items-center rounded-xl p-[2rem] space-y-6 text-neutral-200 min-h-full">
       {completions.length == 0 && (
@@ -25,7 +26,7 @@ export default function Messages({ completions }: MessageProps) {
       {completions.map((comp, i) => {
         return (
           <div className="flex flex-col justify-start items-center w-full max-w-[60rem] text-[1.15rem]" key={i}>
-            <Prompt prompt={comp.prompt}/>
+            <Prompt prompt={comp.prompt} onEdit={(newText) => onEditPrompt(i, newText)}/>
             <LlmResponse response={comp.response}/>
           </div>
         );
