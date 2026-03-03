@@ -34,7 +34,7 @@ type CodeProps = React.HTMLAttributes<HTMLElement> & {
 };
 
 const InlineCode = ({ className, children, ...props }: CodeProps) => (
-  <code className='bg-neutral-800 px-1.5 py-0.5 rounded text-white font-semibold' {...props}>
+  <code className='bg-[#1a1b26] px-1.5 py-0.5 rounded text-[#c0caf5] font-semibold border border-neutral-700' {...props}>
     {children}
   </code>
 );
@@ -52,15 +52,15 @@ const CodeBlock = ({ className, children, ...props }: CodeProps) => {
   const language = className?.split("-")[1] || ''
 
   return (
-    <div className="leading-normal my-4">
-      <div className='h-[3rem] bg-neutral-800 rounded-t-xl flex flex-row justify-between items-center'>
-        <span className='p-4'>{language}</span>
-        <button onClick={handleCopy} className="p-2 mr-2 hover:bg-neutral-700 rounded text-neutral-300 hover:cursor-pointer">
-          {copied ? <FaCheck className='text-[#98C379]'/> : <FaRegCopy />}
+    <div className="leading-normal my-4 rounded-xl border border-neutral-700 overflow-hidden shadow-lg shadow-black/20">
+      <div className='h-[3rem] bg-neutral-800 flex flex-row justify-between items-center border-b border-neutral-700'>
+        <span className='p-4 text-neutral-400 text-sm font-mono uppercase tracking-wider'>{language}</span>
+        <button onClick={handleCopy} className="p-2 mr-2 hover:bg-neutral-700 rounded text-neutral-400 hover:text-white transition-colors hover:cursor-pointer">
+          {copied ? <FaCheck className='text-green-400'/> : <FaRegCopy />}
         </button>
       </div>
 
-      <code className={`${className || ''} rounded-b-xl p-4 bg-neutral-800 block`} {...props}>
+      <code className={`${className || ''} p-4 bg-[#1a1b26] block text-[#c0caf5]`} {...props}>
         {children}
       </code>
     </div>
@@ -88,12 +88,53 @@ const Code = (props: CodeProps) => {
 export default function LlmResponse({ response }: ResponseProps) {
   return (
     <div className="flex flex-row justify-start items-start w-full">
+      <style>{`
+        /* TokyoNight Moon Syntax Highlighting */
+        .hljs {
+          color: #c0caf5;
+          background: #1a1b26;
+        }
+        .hljs-keyword { color: #bb9af7; font-weight: 600; }
+        .hljs-function { color: #7aa2f7; }
+        .hljs-string { color: #9ece6a; }
+        .hljs-number { color: #ff9e64; }
+        .hljs-comment { color: #565f89; font-style: italic; }
+        .hljs-variable { color: #c0caf5; }
+        .hljs-params { color: #c0caf5; }
+        .hljs-property { color: #73daca; }
+        .hljs-operator { color: #bb9af7; }
+        .hljs-punctuation { color: #73daca; }
+        .hljs-tag { color: #f7768e; }
+        .hljs-attr { color: #e0af68; }
+        .hljs-built_in { color: #e0af68; }
+        .hljs-type { color: #2ac3de; }
+        .hljs-class { color: #e0af68; }
+        .hljs-literal { color: #ff9e64; }
+        .hljs-regexp { color: #b9f27c; }
+        .hljs-template-variable { color: #e0af68; }
+        .hljs-title { color: #7aa2f7; }
+        .hljs-name { color: #f7768e; }
+        .hljs-section { color: #7aa2f7; }
+        .hljs-selector-class { color: #e0af68; }
+        .hljs-selector-id { color: #e0af68; }
+        .hljs-selector-tag { color: #f7768e; }
+        .hljs-attribute { color: #e0af68; }
+        .hljs-symbol { color: #c0caf5; }
+        .hljs-bullet { color: #89ddff; }
+        .hljs-addition { color: #449dab; }
+        .hljs-deletion { color: #914c54; }
+        .hljs-link { color: #73daca; text-decoration: underline; }
+        .hljs-emphasis { font-style: italic; }
+        .hljs-strong { font-weight: 700; }
+        .hljs-meta { color: #565f89; }
+        .hljs-selector-pseudo { color: #2ac3de; }
+      `}</style>
               {response === "" ? (
                 <div className="p-[1rem] bg-[#222222] rounded-xl break-words text-xl animate-pulse">
                   • • •
                 </div>
               ) : (
-                <div className="p-[1rem]  rounded-xl max-w-[100%] space-y-6 leading-loose">
+                <div className="p-[1rem] rounded-xl max-w-[100%] space-y-6 leading-loose">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm, remarkMath]}
                     rehypePlugins={[rehypeHighlight, rehypeKatex]}

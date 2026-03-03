@@ -77,7 +77,7 @@ export default function Prompt({ prompt, onEdit }: PromptProps) {
   if (isEditing) {
     return (
       <div className="flex flex-col items-end w-full mb-2">
-        <div className="flex flex-col w-full max-w-[65%] bg-[#222222] rounded-xl p-[1rem] gap-2">
+        <div className="flex flex-col w-full max-w-[65%] bg-[#222222] rounded-xl p-[1rem] gap-2 outline-1 outline-neutral-700">
           <textarea
             ref={textareaRef}
             value={editText}
@@ -111,11 +111,11 @@ export default function Prompt({ prompt, onEdit }: PromptProps) {
 
   return (
     <div
-      className="flex flex-col items-end w-full mb-2"
+      className="flex flex-col items-end w-full mb-2 "
       onMouseOver={() => setCopyShowing(true)}
       onMouseOut={() => setCopyShowing(false)}
     >
-      <div className="p-[1rem] bg-[#222222] rounded-xl break-words max-w-[65%] whitespace-pre-wrap h-full">
+      <div className="p-[1rem] bg-[#222222] rounded-xl break-words max-w-[65%] whitespace-pre-wrap h-full outline-1 outline-neutral-800">
         {prompt}
       </div>
       <div className="flex flex-row gap-1">
