@@ -11,7 +11,8 @@ import {
 
 type Completion = {
   prompt: string,
-  response: string
+  response: string,
+  isStreaming?: boolean,
 }
 
 type Conversation = {
@@ -30,14 +31,14 @@ export default function Home() {
   const [prompt, setPrompt] = useState<string>("")
   const [model, setModel] = useState<string>(DEFAULT_OPENROUTER_MODELS[0])
   const [models, setModels] = useState<string[]>(DEFAULT_OPENROUTER_MODELS)
-  const [isStreaming, setIsStreaming] = useState(false)
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const abortControllersRef = useRef<Map<string, AbortController>>(new Map());
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
   const completions = currentConversation?.completions ?? [];
+  const isStreaming = completions.some(c => c.isStreaming);
 
   function generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -56,19 +57,11 @@ export default function Home() {
     };
     setConversations(prev => [newConversation, ...prev]);
     setCurrentConversationId(newConversation.id);
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
-    setIsStreaming(false);
+    // Note: We no longer abort other conversations' streams
   }
 
   function handleSelectConversation(id: string) {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
-    setIsStreaming(false);
+    // Note: We no longer abort other conversations' streams when switching
     setCurrentConversationId(id);
   }
 
@@ -86,16 +79,16 @@ export default function Home() {
   async function handleEditPrompt(index: number, newText: string) {
     if (newText.trim() === "" || !currentConversationId) return;
 
-    // Cancel any in-flight stream
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
+    // Cancel any in-flight stream for this specific conversation only
+    const existingController = abortControllersRef.current.get(currentConversationId);
+    if (existingController) {
+      existingController.abort();
+      abortControllersRef.current.delete(currentConversationId);
     }
-    setIsStreaming(false);
 
     // Slice completions up to (not including) the edited index, then add the edited prompt with empty response
     const slicedCompletions = completions.slice(0, index);
-    const newCompletion: Completion = { prompt: newText, response: "" };
+    const newCompletion: Completion = { prompt: newText, response: "", isStreaming: true };
 
     setConversations(prev => prev.map(c => {
       if (c.id === currentConversationId) {
@@ -109,9 +102,9 @@ export default function Home() {
     }));
 
     // Stream the response for the edited prompt
-    setIsStreaming(true);
-    abortControllerRef.current = new AbortController();
-    const signal = abortControllerRef.current.signal;
+    const controller = new AbortController();
+    abortControllersRef.current.set(currentConversationId, controller);
+    const signal = controller.signal;
     let fullText = "";
 
     try {
@@ -148,33 +141,47 @@ export default function Home() {
         console.error("Edit prompt request failed:", error);
       }
     } finally {
-      setIsStreaming(false);
+      // Mark streaming as complete for this completion
+      setConversations(prev => prev.map(c => {
+        if (c.id === currentConversationId) {
+          const newCompletions = [...c.completions];
+          if (newCompletions.length > 0) {
+            newCompletions[newCompletions.length - 1].isStreaming = false;
+          }
+          return { ...c, completions: newCompletions };
+        }
+        return c;
+      }));
+      abortControllersRef.current.delete(currentConversationId);
     }
   }
 
   async function handleSubmit() {
-    if(prompt.trim() === "" || isStreaming || !model){
-      return
+    const targetId = currentConversationId || generateId();
+    
+    // Check if already streaming in this specific conversation
+    const targetConv = conversations.find(c => c.id === targetId);
+    if (prompt.trim() === "" || targetConv?.completions.some(c => c.isStreaming) || !model) {
+      return;
     }
-    setIsStreaming(true)
 
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+    // Cancel any in-flight stream for this specific conversation only
+    const existingController = abortControllersRef.current.get(targetId);
+    if (existingController) {
+      existingController.abort();
+      abortControllersRef.current.delete(targetId);
     }
-    abortControllerRef.current = new AbortController();
-    const signal = abortControllerRef.current.signal;
 
     const promptToSend = prompt;
-    setPrompt("")
+    setPrompt("");
 
+    // Create new completion with isStreaming flag
     setConversations(prev => {
-      let targetId = currentConversationId;
-      
-      if (!targetId || !prev.find(c => c.id === targetId)) {
+      if (!currentConversationId || !prev.find(c => c.id === currentConversationId)) {
         const newConv: Conversation = {
-          id: generateId(),
+          id: targetId,
           title: generateTitle(promptToSend),
-          completions: [{ prompt: promptToSend, response: "" }],
+          completions: [{ prompt: promptToSend, response: "", isStreaming: true }],
           updatedAt: Date.now(),
         };
         setCurrentConversationId(newConv.id);
@@ -186,7 +193,7 @@ export default function Home() {
           return {
             ...c,
             title: c.completions.length === 0 ? generateTitle(promptToSend) : c.title,
-            completions: [...c.completions, { prompt: promptToSend, response: "" }],
+            completions: [...c.completions, { prompt: promptToSend, response: "", isStreaming: true }],
             updatedAt: Date.now(),
           };
         }
@@ -194,13 +201,17 @@ export default function Home() {
       });
     });
 
-    let fullText = ''
+    // Setup abort controller for this specific conversation
+    const controller = new AbortController();
+    abortControllersRef.current.set(targetId, controller);
+    const signal = controller.signal;
+    let fullText = '';
 
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: promptToSend, completions, model }),
+        body: JSON.stringify({ message: promptToSend, completions: targetConv?.completions ?? [], model }),
         signal,
       });
 
@@ -220,7 +231,7 @@ export default function Home() {
         fullText += decoder.decode(value, { stream: true });
         setConversations(prev => {
           return prev.map(c => {
-            if (c.id === currentConversationId) {
+            if (c.id === targetId) {
               const newCompletions = [...c.completions];
               newCompletions[newCompletions.length - 1].response = fullText;
               return { ...c, completions: newCompletions };
@@ -234,17 +245,30 @@ export default function Home() {
         console.error("Chat request failed:", error);
       }
     } finally {
-      setIsStreaming(false)
+      // Mark streaming as complete for this completion
+      setConversations(prev => prev.map(c => {
+        if (c.id === targetId) {
+          const newCompletions = [...c.completions];
+          if (newCompletions.length > 0) {
+            newCompletions[newCompletions.length - 1].isStreaming = false;
+          }
+          return { ...c, completions: newCompletions };
+        }
+        return c;
+      }));
+      abortControllersRef.current.delete(targetId);
     }
   }
 
   function handleClear() {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
-    
     if (currentConversationId) {
+      // Abort only this conversation's stream
+      const controller = abortControllersRef.current.get(currentConversationId);
+      if (controller) {
+        controller.abort();
+        abortControllersRef.current.delete(currentConversationId);
+      }
+      
       setConversations(prev => prev.map(c => {
         if (c.id === currentConversationId) {
           return { ...c, completions: [] };
@@ -252,7 +276,6 @@ export default function Home() {
         return c;
       }));
     }
-    setIsStreaming(false)
   }
 
   function handleAddModel(nextModel: string) {
