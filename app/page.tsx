@@ -13,6 +13,7 @@ type Completion = {
   prompt: string,
   response: string,
   isStreaming?: boolean,
+  isSearching?: boolean,
 }
 
 type Conversation = {
@@ -121,20 +122,48 @@ export default function Home() {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
+      let buffer = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done || signal.aborted) break;
 
-        fullText += decoder.decode(value, { stream: true });
-        setConversations(prev => prev.map(c => {
-          if (c.id === currentConversationId) {
-            const newCompletions = [...c.completions];
-            newCompletions[newCompletions.length - 1].response = fullText;
-            return { ...c, completions: newCompletions };
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          try {
+            const event = JSON.parse(line) as { type: string; value?: string; query?: string };
+            if (event.type === "text" && event.value) {
+              fullText += event.value;
+              setConversations(prev => prev.map(c => {
+                if (c.id !== currentConversationId) return c;
+                const newCompletions = [...c.completions];
+                newCompletions[newCompletions.length - 1].response = fullText;
+                newCompletions[newCompletions.length - 1].isSearching = false;
+                return { ...c, completions: newCompletions };
+              }));
+            } else if (event.type === "tool-call-start") {
+              setConversations(prev => prev.map(c => {
+                if (c.id !== currentConversationId) return c;
+                const newCompletions = [...c.completions];
+                newCompletions[newCompletions.length - 1].isSearching = true;
+                return { ...c, completions: newCompletions };
+              }));
+            } else if (event.type === "tool-result") {
+              setConversations(prev => prev.map(c => {
+                if (c.id !== currentConversationId) return c;
+                const newCompletions = [...c.completions];
+                newCompletions[newCompletions.length - 1].isSearching = false;
+                return { ...c, completions: newCompletions };
+              }));
+            }
+          } catch {
+            // ignore malformed lines
           }
-          return c;
-        }));
+        }
       }
     } catch (error) {
       if (!(error instanceof DOMException && error.name === "AbortError")) {
@@ -147,6 +176,7 @@ export default function Home() {
           const newCompletions = [...c.completions];
           if (newCompletions.length > 0) {
             newCompletions[newCompletions.length - 1].isStreaming = false;
+            newCompletions[newCompletions.length - 1].isSearching = false;
           }
           return { ...c, completions: newCompletions };
         }
@@ -221,6 +251,7 @@ export default function Home() {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
+      let buffer = "";
 
       while (true) {
         const { done, value } = await reader.read();
@@ -228,17 +259,42 @@ export default function Home() {
           break;
         }
 
-        fullText += decoder.decode(value, { stream: true });
-        setConversations(prev => {
-          return prev.map(c => {
-            if (c.id === targetId) {
-              const newCompletions = [...c.completions];
-              newCompletions[newCompletions.length - 1].response = fullText;
-              return { ...c, completions: newCompletions };
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          try {
+            const event = JSON.parse(line) as { type: string; value?: string; query?: string };
+            if (event.type === "text" && event.value) {
+              fullText += event.value;
+              setConversations(prev => prev.map(c => {
+                if (c.id !== targetId) return c;
+                const newCompletions = [...c.completions];
+                newCompletions[newCompletions.length - 1].response = fullText;
+                newCompletions[newCompletions.length - 1].isSearching = false;
+                return { ...c, completions: newCompletions };
+              }));
+            } else if (event.type === "tool-call-start") {
+              setConversations(prev => prev.map(c => {
+                if (c.id !== targetId) return c;
+                const newCompletions = [...c.completions];
+                newCompletions[newCompletions.length - 1].isSearching = true;
+                return { ...c, completions: newCompletions };
+              }));
+            } else if (event.type === "tool-result") {
+              setConversations(prev => prev.map(c => {
+                if (c.id !== targetId) return c;
+                const newCompletions = [...c.completions];
+                newCompletions[newCompletions.length - 1].isSearching = false;
+                return { ...c, completions: newCompletions };
+              }));
             }
-            return c;
-          });
-        });
+          } catch {
+            // ignore malformed lines
+          }
+        }
       }
     } catch (error) {
       if (!(error instanceof DOMException && error.name === "AbortError")) {
@@ -251,6 +307,7 @@ export default function Home() {
           const newCompletions = [...c.completions];
           if (newCompletions.length > 0) {
             newCompletions[newCompletions.length - 1].isStreaming = false;
+            newCompletions[newCompletions.length - 1].isSearching = false;
           }
           return { ...c, completions: newCompletions };
         }

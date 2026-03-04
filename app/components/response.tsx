@@ -3,13 +3,14 @@ import rehypeHighlight from "rehype-highlight";
 import remarkGfm from 'remark-gfm'
 import { FaCheck, FaRegCopy } from 'react-icons/fa';
 import type { Element } from "hast";
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
 type ResponseProps = {
   response: string
+  isSearching?: boolean
 }
 
 function getTextFromNode(node: React.ReactNode | string | number): string {
@@ -85,7 +86,17 @@ const Code = (props: CodeProps) => {
   return <CodeBlock {...props} />;
 };
 
-export default function LlmResponse({ response }: ResponseProps) {
+export default function LlmResponse({ response, isSearching }: ResponseProps) {
+  const [hasSearched, setHasSearched] = useState(false);
+
+  useEffect(() => {
+    if (isSearching) {
+      setHasSearched(true);
+    }
+  }, [isSearching]);
+
+  const showSearching = hasSearched || isSearching;
+
   return (
     <div className="flex flex-row justify-start items-start w-full">
       <style>{`
@@ -130,8 +141,8 @@ export default function LlmResponse({ response }: ResponseProps) {
         .hljs-selector-pseudo { color: #2ac3de; }
       `}</style>
               {response === "" ? (
-                <div className="p-[1rem] bg-[#222222] rounded-xl break-words text-xl animate-pulse">
-                  • • •
+                <div className="p-[1rem] bg-[#222222] rounded-xl break-words text-lg animate-pulse">
+                  {showSearching ? "Searching the web..." : "• • •"}
                 </div>
               ) : (
                 <div className="p-[1rem] rounded-xl max-w-[100%] space-y-6 leading-loose">

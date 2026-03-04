@@ -5,7 +5,8 @@ import LlmResponse from './response';
 
 type Completion = {
   prompt: string,
-  response: string
+  response: string,
+  isSearching?: boolean,
 }
 
 type MessageProps = {
@@ -27,7 +28,7 @@ export default function Messages({ completions, onEditPrompt }: MessageProps) {
         return (
           <div className="flex flex-col justify-start items-center w-full max-w-[60rem] text-[1.15rem]" key={i}>
             <Prompt prompt={comp.prompt} onEdit={(newText) => onEditPrompt(i, newText)}/>
-            <LlmResponse response={comp.response}/>
+            <LlmResponse response={comp.response} isSearching={comp.isSearching}/>
           </div>
         );
       })}
